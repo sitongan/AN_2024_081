@@ -15,10 +15,21 @@
 \usepackage{multirow}
 \usepackage{float}
 \usepackage{tikz}
-%\usepackage{subcaption}
+\usepackage{subcaption}
 \usepackage{geometry}
 %\usepackage{placeins}
 \usepackage{caption}
+\usepackage{longtable}
+\usepackage{array}
+\usepackage{ifthen}
+\usepackage{pdfpages}
+\usepackage{tabularx}
+\usepackage{booktabs}
+\usepackage{multirow}
+\usepackage{adjustbox}
+
+\usepackage{placeins} % Ensures figures do not float past section
+%\usepackage{subfigure}
 
 \geometry{
  a4paper,
@@ -41,7 +52,7 @@
 %\maketitle
 
 \section{Introduction}
-Four-top quark production ($t\bar{t}t\bar{t}$) is a rare process within the Standard Model (SM) that serves as a crucial probe for both SM and beyond-the-Standard-Model (BSM) physics. Figure \ref{fig:ftop_feymann} illustrates representative leading-order Feynman diagrams for $t\bar{t}t\bar{t}$ production. The latest predicted SM cross section for $t\bar{t}t\bar{t}$ production at next-to-leading order (NLO) with next-to-leading logarithmic (NLL') correction is 13.37 fb at $\sqrt{s}$ = 13 TeV and 15.82 TeV at $\sqrt{s}$ = 13.6 fb \cite{ftop_xsec}. This process is sensitive to the top quark's Yukawa coupling with the Higgs boson while remaining unaffected by the Higgs boson decay, making it a prime candidate for identifying any deviations from SM predictions regarding the top quark Yukawa coupling. Furthermore, deviations in the four-top production cross section from SM predictions could also signal the presence of undiscovered heavy scalar or pseudo-scalar bosons decaying into top quarks, as proposed in several extensions of the SM, including top-philic resonances as shown by Figure \ref{fig:tp_feymann}.\\
+Four-top quark production ($t\bar{t}t\bar{t}$) is a rare process within the Standard Model (SM) that serves as a crucial probe for both SM and beyond-the-Standard-Model (BSM) physics. Figure \ref{fig:ftop_feymann} illustrates representative leading-order Feynman diagrams for $t\bar{t}t\bar{t}$ production. The latest predicted SM cross section for $t\bar{t}t\bar{t}$ production at next-to-leading order (NLO) with next-to-leading logarithmic (NLL') correction is 13.37 fb at $\sqrt{s}$ = 13 TeV and 15.82 fb at $\sqrt{s}$ = 13.6 TeV \cite{ftop_xsec}. This process is sensitive to the top quark's Yukawa coupling with the Higgs boson while remaining unaffected by the Higgs boson decay, making it a prime candidate for identifying any deviations from SM predictions regarding the top quark Yukawa coupling. Furthermore, deviations in the four-top production cross section from SM predictions could also signal the presence of undiscovered heavy scalar or pseudo-scalar bosons decaying into top quarks, as proposed in several extensions of the SM, including top-philic resonances as shown by Figure \ref{fig:tp_feymann}.\\
 
 \begin{figure}[h!]
     \centering
@@ -59,17 +70,17 @@ Four-top quark production ($t\bar{t}t\bar{t}$) is a rare process within the Stan
 
 Each top quark predominantly decays into a bottom quark and a W boson. The W boson then decays either hadronically, producing quarks, or leptonically, yielding a lepton and a neutrino. In this analysis, the fully hadronic final state, where all four top quarks decay entirely into hadrons, is being investigated for the first time, representing about 20\% of all four-top quark events.\\
 
-This analysis follows a previous CMS analysis on all-hadronic four-top production with Run2 dataset described in AN2020\_021. The observed significance of the \(t\bar{t}t\bar{t}\) signal in this channel was 2.5 standard deviations (with 0.4 expected). When combined \cite{prev_ftop_analysis} with other channels (Single Lepton, opposite-sign dilepton), the observed significance of the \(t\bar{t}t\bar{t}\) signal was 3.9 standard deviations (with 1.5 expected). In this analysis, we improve upon the previous all-hadronic channel analysis and expand it to include 2022, 2023 data. We will also include an interpretation against the top-philic resonance BSM model\cite{topphilic}.\\
+This analysis follows a previous CMS analysis \cite{prev_ftop_analysis} on all-hadronic four-top production with Run2 pre-legacy dataset described in AN2020\_021. The observed significance of the \(t\bar{t}t\bar{t}\) signal in this channel was 2.5 standard deviations (with 0.4 expected). When combined  with other channels (Single Lepton, opposite-sign dilepton), the observed significance of the \(t\bar{t}t\bar{t}\) signal was 3.9 standard deviations (with 1.5 expected). In this analysis, we improve upon the previous all-hadronic channel analysis by switching to ultra-legacy Run2 data and by including 2022, 2023 Run3 data. While most of the methodology follows, everything (ML training, scale factor derivations etc.) is redone on the new ultra-legacy dataset. We will also include an interpretation against the top-philic resonance BSM model\cite{topphilic}.\\
 
-The search for four-top quark production in the fully hadronic final state faces significant challenges due to substantial backgrounds from top quark pair (\(t\bar{t}\)) and QCD multijet production. To address these challenges, specialized machine learning tools for hadronic top quark tagging are utilized. In the "boosted" regime, where top quarks have high transverse momentum (\(p_T\)) and their decay products produce collimated jets, the Particlenet boosted object tagger is employed for identification. For top quarks in the "resolved" regime, characterized by moderate \(p_T\) and distinct jets resulting from the hadronization of decay products, a dedicated BDT-based resolved top tagger has been developed specifically for this analysis.
+The search for four-top quark production in the fully hadronic final state faces significant challenges due to substantial backgrounds from top quark pair (\(t\bar{t}\)) and QCD multijet production. To address these challenges, specialized machine learning tools for hadronic top quark tagging are utilized. In the "boosted" regime, where top quarks have high transverse momentum (\(p_T\)) and their decay products produce collimated jets, the Particlenet boosted object tagger is employed for identification. For top quarks in the "resolved" regime, characterized by moderate \(p_T\) and distinct jets resulting from the hadronization of decay products, a dedicated BDT-based resolved top tagger has been developed specifically for this analysis.\\
 
 The search strategy classifies events into distinct categories based on the number of reconstructed top quarks and the scalar sum of jet transverse momenta (\(H_T\)). An event-level BDT, trained on kinematic variables, is then employed to distinguish the \(t\bar{t}t\bar{t}\) signal from the background. To estimate the dominant backgrounds, originating from \(t\bar{t}\) and QCD multijet production, data-driven techniques are applied, ensuring accurate background modeling and robust signal extraction.
 
-
+\clearpage
 \section{Triggers and Dataset}
 \label{sec:trigger}
 
-The data for this search are recorded using a suite of cross-triggers requiring the presence of $\ge 6$ jets, $\ge 1$ or $\ge 2$ b-tagged jets, and large $H_T$. For part of the 2017 run, a 4-jet, 3-b jet, high $H_T$ trigger is included as well in order to maximize the trigger efficiency. The HLT paths of the triggers used for the 2016, 2017, and 2018data-taking periods are listed in Table 1. The HLT paths of the triggers used for the 2022 and 2023 data-taking periods are listed in Table 2. 
+The data for this search are recorded using a suite of cross-triggers requiring the presence of $\ge 6$ jets, $\ge 1$ or $\ge 2$ b-tagged jets, and large $H_T$. The HLT paths of the triggers used for the 2016, 2017, and 2018data-taking periods are listed in Table 1. The HLT paths of the triggers used for the 2022 and 2023 data-taking periods are listed in Table 2. 
 \begin{table}[h]
 \caption{ HLT paths corresponding to the triggers used for the search in 2016, 2017, and 2018.}
 \centering
@@ -78,7 +89,7 @@ The data for this search are recorded using a suite of cross-triggers requiring 
 Year                  & \multicolumn{1}{c|}{Era} & \multicolumn{1}{c|}{Trigger path}                                                                                                                                                                     \\ \hline
 2016                  & B, C, D, E, F, G, H      & \begin{tabular}[c]{@{}l@{}}HLT\_PFHT400\_SixJet30\_DoubleBTagCSV\_p056\\ HLT\_PFHT450\_SixJet40\_BTagCSV\_p056\end{tabular}                                                                           \\ \hline
 \multirow{2}{*}{2017} & B                        & \begin{tabular}[c]{@{}l@{}}HLT\_PFHT380\_SixJet32\_DoubleBTagCSV\_p075\\ HLT\_PFHT430\_SixJet40\_BTagCSV\_p080\end{tabular}                                                                           \\ \cline{2-3} 
-                      & C, D, E, F               & \begin{tabular}[c]{@{}l@{}}HLT\_PFHT380\_SixPFJet32\_DoublePFBTagCSV\_2p2\\ HLT\_PFHT430\_SixPFJet40\_PFBTagCSV\_1p5\\ HLT\_PFHT300PT30\_QuadPFJet\_75\_60\_45\_40\_TriplePFBTagCSV\_3p0\end{tabular} \\ \hline
+                      & C, D, E, F               & \begin{tabular}[c]{@{}l@{}}HLT\_PFHT380\_SixPFJet32\_DoublePFBTagCSV\_2p2\\ HLT\_PFHT430\_SixPFJet40\_PFBTagCSV\_1p5\end{tabular} \\ \hline
 \multirow{2}{*}{2018} & A                        & \begin{tabular}[c]{@{}l@{}}HLT\_PFHT380\_SixPFJet32\_DoublePFBTagDeepCSV\_2p2\\ HLT\_PFHT430\_SixPFJet40\_PFBTagDeepCSV\_1p5\end{tabular}                                                             \\ \cline{2-3} 
                       & B, C, D                  & \begin{tabular}[c]{@{}l@{}}HLT\_PFHT400\_SixPFJet32\_DoublePFBTagDeepCSV\_2p94\\ HLT\_PFHT450\_SixPFJet36\_PFBTagDeepCSV\_1p59\end{tabular}                                                           \\ \hline
 \end{tabular}
@@ -94,7 +105,8 @@ Year                  & \multicolumn{1}{c|}{Era} & \multicolumn{1}{c|}{Trigger p
                       & D                        & \begin{tabular}[c]{@{}l@{}}HLT\_PFHT400\_SixPFJet32\_PNet2BTagMean0p50\\ HLT\_PFHT450\_SixPFJet36\_PNetBTag0p35\end{tabular}                \\ \hline
 \end{tabular}
 \end{table}
-The efficiency of these triggers is measured in an independent sample selected with a single muon trigger (HLT\_IsoMu24 or HLT\_IsoMu27). The efficiency is measured as a function of $N_{b-jet}$ and $N_{jet}$. The efficiency is measured in the region where  $H_T >900$ GeV, as the trigger efficiency is expected to be independent of $H_T$ in this region. In order to avoid overlapping to the analysis region, one or more off-line leptons as defined in \autoref{sec:leptons} are required. The efficiency is computed as follows:
+
+The efficiency of these triggers is measured in an independent sample selected with a single muon trigger (HLT\_IsoMu24 or HLT\_IsoMu27). The efficiency is measured as a function of $N_{b-jet}$ and $N_{jet}$. The efficiency is measured in the region where  $H_T >900$ GeV, as the trigger efficiency is expected to be independent of $H_T$ in this region. In order to ensure that the events passing the single muon trigger are triggered by genuine muons rather than jets, one or more offline muons as defined in \ref{sec:leptons} are required. The efficiency is computed as follows:
 \begin{equation}
   \epsilon(N_j, N_b) = \frac{\textrm{Number of events passed OR of triggers and denominator selection}}{\textrm{Number of events that passed HLT\_IsoMu24 or HLT\_IsoMu27}}.
 \end{equation}
@@ -107,22 +119,23 @@ The efficiency of these triggers is measured in an independent sample selected w
     \includegraphics[width=.4\columnwidth]{plots/Trigger/2018.pdf}
     
     \caption{Efficiency measured for search triggers as a function of $N_{jet}$ and $N_{b-jet}$ for 2016 pre VFP, 2016 post VFP, 2017 and 2018 data. The $N_{jet}$ = 6 region used for the validation test is shown as well.}
-    \label{figure_1} 
+    %\label{figure_1} 
 \end{figure}
 
 \begin{figure}[!t]
     \centering
-    \includegraphics[width=.4\columnwidth]{plots/Trigger/2022.pdf}
+     \includegraphics[width=.4\columnwidth]{plots/Trigger/2022.pdf}
     \includegraphics[width=.4\columnwidth]{plots/Trigger/2022EE.pdf}
     \includegraphics[width=.4\columnwidth]{plots/Trigger/2023.pdf}
     \includegraphics[width=.4\columnwidth]{plots/Trigger/2023BPix.pdf}
     
     \caption{Efficiency measured for search triggers as a function of $N_{jet}$ and $N_{b-jet}$ for 2016 pre VFP, 2016 post VFP, 2017 and 2018 data. The $N_{jet}$ = 6 region used for the validation test is shown as well.}
-    \label{figure_1} 
+    %\label{figure_1} 
 \end{figure}
-The datasets used for measuring trigger efficiency, as listed in Tables 3 and 4, include events that have passed the isolated muon trigger.
+The datasets used for measuring trigger efficiency, as listed in Tables \ref{tab:triggersfdatasetrun2} and \ref{tab:triggersfdatasetrun3}, include events that have passed the isolated muon trigger.
 \begin{table}[]
 \caption{ Dataset used for run2 trigger efficiency measurement}
+\label{tab:triggersfdatasetrun2}
 \centering
 \begin{tabular}{|c|l|}
 \hline
@@ -135,6 +148,7 @@ Year                               & \multicolumn{1}{c|}{Dataset}               
 \end{table}
 \begin{table}[]
 \caption{ Dataset used for early run3 trigger efficiency measurement}
+\label{tab:triggersfdatasetrun3}
 \centering
 \begin{tabular}{|c|l|}
 \hline
@@ -156,10 +170,11 @@ Figure 1 and 2 show the measured efficiency in the $N_{jet} $ and $ N_{b-jet}$ p
     \includegraphics[width=.24\columnwidth]{plots/Trigger/turnOn_UL2016_Coron.pdf}
     \includegraphics[width=.24\columnwidth]{plots/Trigger/turnOn_UL2017_Coron.pdf}
     \includegraphics[width=.24\columnwidth]{plots/Trigger/turnOn_UL2018_Coron.pdf}
+    \includegraphics[width=.88\columnwidth]{plots/Trigger/Legend.png}
 
     
-    \caption{Trigger turn-on vs $H_T$ before (top) and after (bottom) correcting for efficiencies measured as a function of $N_{jet}$ and $N_{b-jet}$ for 2016 pre VFP, 2016 post VFP, 2017 and 2018 data.}
-    \label{figure_1} 
+    \caption{Trigger turn-on vs $H_T$ before (top) and after (bottom) correcting for efficiencies measured as a function of $N_{jet}$ and $N_{b-jet}$ for 2016 pre VFP, 2016 post VFP, 2017 and 2018 data. The target trigger refers to the OR of the trigger paths listed in Table 1 for the respective era, while the reference trigger refers to the OR of IsoMU triggers}
+    %\label{figure_1} 
 \end{figure}
 \begin{figure}[!t]
     \centering
@@ -171,12 +186,1020 @@ Figure 1 and 2 show the measured efficiency in the $N_{jet} $ and $ N_{b-jet}$ p
     \includegraphics[width=.24\columnwidth]{plots/Trigger/turnOn_2022EE_Coron.pdf}
     \includegraphics[width=.24\columnwidth]{plots/Trigger/turnOn_2023_Coron.pdf}
     \includegraphics[width=.24\columnwidth]{plots/Trigger/turnOn_2023BPix_Coron.pdf}
+    \includegraphics[width=.88\columnwidth]{plots/Trigger/Legend.png}
 
-    \caption{Trigger turn-on vs $H_T$ for 2022 and 2023 data. Upper plot shows }
-    \label{figure_1} 
+    \caption{Trigger turn-on vs $H_T$ before (top) and after (bottom) correcting for efficiencies measured as a function of $N_{jet}$ and $N_{b-jet}$ for 2022 and 2023 data. The target trigger refers to the OR of the trigger paths listed in Table 2 for the respective era, while the reference trigger refers to the OR of IsoMU triggers}
+    %\label{figure_1} 
 \end{figure}
 
-The trigger paths include selection criteria based on $N_{jet}$, $N_{b-jet}$, and $H_{T}$. Ideally, the trigger efficiency should be measured as a function of all three variables. However, due to limited statistical precision, the efficiency is measured as a function of $N_{jet}$ and $N_{b-jet}$. To validate that this approach is sufficient, the trigger turn-on curve is used. Figure 3 and 4 show the $H_T$ turn-on for each year before and after applying the $N_{jet}$ and $N_{b-jet}$ dependent corrections. Before the corrections, the efficiency in the plateau region ($H_T \geq 900$ GeV) deviates from unity. After the corrections are applied, the plateau region is close to 1. This behavior shows that the chosen approach is sufficient for measuring the trigger efficiency. The measured trigger efficiency is directly used as trigger SF to MC because the trigger efficiency in not applied at MC in this analysis.
+The trigger paths include selection criteria based on $N_{jet}$, $N_{b-jet}$, and $H_{T}$. Ideally, the trigger efficiency should be measured as a function of all three variables. However, due to limited statistical precision, the efficiency is measured as a function of $N_{jet}$ and $N_{b-jet}$. To validate that this approach is sufficient, the trigger turn-on curve is used. Figure 3 and 4 show the $H_T$ turn-on for each year before and after applying the $N_{jet}$ and $N_{b-jet}$ dependent corrections. Before the corrections, the efficiency in the plateau region ($H_T \geq 900$ GeV) deviates from unity. After the corrections are applied, the plateau region is close to 1. This behavior shows that the chosen approach is sufficient for measuring the trigger efficiency. The measured trigger efficiency is directly used as trigger SF to MC because the trigger efficiency in not applied at MC in this analysis.\\
+
+The datasets and Golden JSON files used in this analysis are listed in table \ref{tab:maindataset} and table \ref{tab:golden_json}. The MC samples used in this analysis are listed in table \ref{tab:mc2016pre}, \ref{tab:mc2016}, \ref{tab:mc2017}, \ref{tab:mc2018}, \ref{tab:mc2022}, \ref{tab:mc2022ee}, \ref{tab:mc2023}, and \ref{tab:mc2023bpix}.
+
+\begin{longtable}{|l|l|}
+\caption{Main Dataset used in this analysis} \label{tab:maindataset}\\
+    
+    \hline
+    \textbf{Year} & \textbf{Dataset} \\
+    \hline \hline
+    \endfirsthead
+
+    \multicolumn{2}{c}{\textit{(Continued from previous page)}} \\
+    \hline
+    \textbf{Year} & \textbf{Dataset} \\
+    \hline \hline
+    \endhead
+
+    \hline
+    \multicolumn{2}{r}{\textit{(Continued on next page)}} \\
+    \endfoot
+
+    \hline
+    \endlastfoot
+    2016 preVFP & /JetHT/Run2016B-ver1\_HIPM\_UL2016\_MiniAODv2\_NanoAODv9-v2/NANOAOD \\
+                 & /JetHT/Run2016D-HIPM\_UL2016\_MiniAODv2\_NanoAODv9-v2/NANOAOD \\
+                 & /JetHT/Run2016B-ver2\_HIPM\_UL2016\_MiniAODv2\_NanoAODv9-v2/NANOAOD \\
+                 & /JetHT/Run2016E-HIPM\_UL2016\_MiniAODv2\_NanoAODv9-v2/NANOAOD \\
+                 & /JetHT/Run2016C-HIPM\_UL2016\_MiniAODv2\_NanoAODv9-v2/NANOAOD \\
+                 & /JetHT/Run2016F-HIPM\_UL2016\_MiniAODv2\_NanoAODv9-v2/NANOAOD \\
+    \hline
+    2016 & /JetHT/Run2016F-UL2016\_MiniAODv2\_NanoAODv9-v1/NANOAOD \\
+         & /JetHT/Run2016G-UL2016\_MiniAODv2\_NanoAODv9-v1/NANOAOD \\
+         & /JetHT/Run2016H-UL2016\_MiniAODv2\_NanoAODv9-v1/NANOAOD \\
+    \hline
+    2017 & /JetHT/Run2017B-UL2017\_MiniAODv2\_NanoAODv9-v1/NANOAOD \\
+         & /JetHT/Run2017C-UL2017\_MiniAODv2\_NanoAODv9-v1/NANOAOD \\
+         & /JetHT/Run2017D-UL2017\_MiniAODv2\_NanoAODv9-v1/NANOAOD \\
+         & /JetHT/Run2017E-UL2017\_MiniAODv2\_NanoAODv9-v1/NANOAOD \\
+         & /JetHT/Run2017F-UL2017\_MiniAODv2\_NanoAODv9-v1/NANOAOD \\
+    \hline
+    2018 & /JetHT/Run2018A-UL2018\_MiniAODv2\_NanoAODv9\_GT36-v1/NANOAOD \\
+         & /JetHT/Run2018B-UL2018\_MiniAODv2\_NanoAODv9\_GT36-v1/NANOAOD \\
+         & /JetHT/Run2018C-UL2018\_MiniAODv2\_NanoAODv9\_GT36-v1/NANOAOD \\
+         & /JetHT/Run2018D-UL2018\_MiniAODv2\_NanoAODv9\_GT36-v1/NANOAOD \\
+    \hline
+    2022 & /JetMET/Run2022C-22Sep2023-v1/NANOAOD \\
+         & /JetMET/Run2022D-22Sep2023-v1/NANOAOD \\
+    \hline
+    2022EE & /JetMET/Run2022E-22Sep2023-v1/NANOAOD \\
+           & /JetMET/Run2022F-22Sep2023-v2/NANOAOD \\
+           & /JetMET/Run2022G-22Sep2023-v2/NANOAOD \\
+    \hline
+    2023 & /JetMET0/Run2023C-19Dec2023-v1/NANOAOD \\
+         & /JetMET1/Run2023C-19Dec2023-v1/NANOAOD \\
+    \hline
+    2023BPix & /ParkingHH/Run2023D-22Sep2023\_v1-v1/NANOAOD \\
+    \hline
+\end{longtable}
+
+\begin{longtable}{|l|p{0.7\textwidth}|}
+    \caption{List of certification JSON files for different years.}\label{tab:golden_json} \\
+    \hline
+    \textbf{Year} & \textbf{Golden JSON File} \\
+    \hline \hline
+    \endfirsthead
+    \multicolumn{2}{c}{\textit{(Continued from previous page)}} \\
+    \hline
+    \textbf{Year} & \textbf{Golden JSON File} \\
+    \hline \hline
+    \endhead
+    \hline
+    \multicolumn{2}{r}{\textit{(Continued on next page)}} \\
+    \endfoot
+    \hline
+    \endlastfoot
+    2016preVFP/2016 (36.31 fb\textsuperscript{-1}) & \url{https://cms-service-dqmdc.web.cern.ch/CAF/certification/Collisions16/13TeV/Legacy_2016/Cert_271036-284044_13TeV_Legacy2016_Collisions16_JSON.txt} \\
+    2017 (41.48 fb\textsuperscript{-1})& \url{https://cms-service-dqmdc.web.cern.ch/CAF/certification/Collisions17/13TeV/Legacy_2017/Cert_294927-306462_13TeV_UL2017_Collisions17_GoldenJSON.txt} \\
+    2018 (59.83 fb\textsuperscript{-1})& \url{https://cms-service-dqmdc.web.cern.ch/CAF/certification/Collisions18/13TeV/Legacy_2018/Cert_314472-325175_13TeV_Legacy2018_Collisions18_JSON.txt} \\
+    2022/2022EE (34.65 fb\textsuperscript{-1})& \url{https://cms-service-dqmdc.web.cern.ch/CAF/certification/Collisions22/Cert_Collisions2022_355100_362760_Golden.json} \\
+    2023/2023BPix (27.24 fb\textsuperscript{-1})& \url{https://cms-service-dqmdc.web.cern.ch/CAF/certification/Collisions23/Cert_Collisions2023_366442_370790_Golden.json} \\
+    \hline
+\end{longtable}
+
+
+\begin{longtable}{|>{\raggedright\arraybackslash}p{1.4cm}|>{\footnotesize\raggedright\arraybackslash}p{12cm}|>{\raggedright\arraybackslash}p{1.4cm}|}
+\caption{List of MC samples for year 2016preVFP.}\label{tab:mc2016pre} \\
+\hline
+\textbf{Category} & \textbf{MC Sample} & \textbf{Cross Section (pb)} \\
+\hline
+\endfirsthead
+\multicolumn{2}{c}{\textit{(Continued from previous page)}} \\
+\hline
+\textbf{Category} & \textbf{MC Sample} & \textbf{Cross Section (pb)} \\
+\hline
+\endhead
+\hline
+\multicolumn{2}{r}{\textit{(Continued on next page)}} \\
+\endfoot
+\hline
+\endlastfoot
+\multirow{1}{*}{TTTT} & /TTTT\_TuneCP5\_13TeV-amcatnlo-pythia8/RunIISummer20UL16NanoAODAPVv9-106X\_mcRun2\_asymptotic\_preVFP\_v11-v2/NANOAODSIM & 0.01337 \\
+\hline
+\multirow{3}{*}{TT} & /TTToHadronic\_TuneCP5\_13TeV-powheg-pythia8/RunIISummer20UL16NanoAODAPVv9-106X\_mcRun2\_asymptotic\_preVFP\_v11-v1/NANOAODSIM & 378.93 \\
+\cline{2-3}
+ & /TTToSemiLeptonic\_TuneCP5\_13TeV-powheg-pythia8/RunIISummer20UL16NanoAODAPVv9-106X\_mcRun2\_asymptotic\_preVFP\_v11-v1/NANOAODSIM & 366.29 \\
+\cline{2-3}
+ & /TTTo2L2Nu\_TuneCP5\_13TeV-powheg-pythia8/RunIISummer20UL16NanoAODAPVv9-106X\_mcRun2\_asymptotic\_preVFP\_v11-v1/NANOAODSIM & 88.51 \\
+\hline
+\multirow{7}{*}{QCD} & /QCD\_HT200to300\_TuneCP5\_PSWeights\_13TeV-madgraphMLM-pythia8/RunIISummer20UL16NanoAODAPVv9-106X\_mcRun2\_asymptotic\_preVFP\_v11-v2/NANOAODSIM & 1554000.0 \\
+\cline{2-3}
+ & /QCD\_HT300to500\_TuneCP5\_PSWeights\_13TeV-madgraphMLM-pythia8/RunIISummer20UL16NanoAODAPVv9-106X\_mcRun2\_asymptotic\_preVFP\_v11-v2/NANOAODSIM & 323800.0 \\
+\cline{2-3}
+ & /QCD\_HT500to700\_TuneCP5\_PSWeights\_13TeV-madgraphMLM-pythia8/RunIISummer20UL16NanoAODAPVv9-106X\_mcRun2\_asymptotic\_preVFP\_v11-v1/NANOAODSIM & 30280.0 \\
+\cline{2-3}
+ & /QCD\_HT700to1000\_TuneCP5\_PSWeights\_13TeV-madgraphMLM-pythia8/RunIISummer20UL16NanoAODAPVv9-106X\_mcRun2\_asymptotic\_preVFP\_v11-v1/NANOAODSIM & 6392.0 \\
+\cline{2-3}
+ & /QCD\_HT1000to1500\_TuneCP5\_PSWeights\_13TeV-madgraphMLM-pythia8/RunIISummer20UL16NanoAODAPVv9-106X\_mcRun2\_asymptotic\_preVFP\_v11-v1/NANOAODSIM & 1118.0 \\
+\cline{2-3}
+ & /QCD\_HT1500to2000\_TuneCP5\_PSWeights\_13TeV-madgraphMLM-pythia8/RunIISummer20UL16NanoAODAPVv9-106X\_mcRun2\_asymptotic\_preVFP\_v11-v1/NANOAODSIM & 108.9 \\
+\cline{2-3}
+ & /QCD\_HT2000toInf\_TuneCP5\_PSWeights\_13TeV-madgraphMLM-pythia8/RunIISummer20UL16NanoAODAPVv9-106X\_mcRun2\_asymptotic\_preVFP\_v11-v1/NANOAODSIM & 21.93 \\
+\hline
+\multirow{7}{*}{ttX} & /TTWJetsToLNu\_TuneCP5\_13TeV-amcatnloFXFX-madspin-pythia8/RunIISummer20UL16NanoAODAPVv9-106X\_mcRun2\_asymptotic\_preVFP\_v11-v2/NANOAODSIM & 0.2161 \\
+\cline{2-3}
+ & /TTWJetsToQQ\_TuneCP5\_13TeV-amcatnloFXFX-madspin-pythia8/RunIISummer20UL16NanoAODAPVv9-106X\_mcRun2\_asymptotic\_preVFP\_v11-v2/NANOAODSIM & 0.4377 \\
+\cline{2-3}
+ & /TTZToLLNuNu\_M-10\_TuneCP5\_13TeV-amcatnlo-pythia8/RunIISummer20UL16NanoAODAPVv9-106X\_mcRun2\_asymptotic\_preVFP\_v11-v1/NANOAODSIM & 0.2439 \\
+\cline{2-3}
+ & /TTZToQQ\_TuneCP5\_13TeV-amcatnlo-pythia8/RunIISummer20UL16NanoAODAPVv9-106X\_mcRun2\_asymptotic\_preVFP\_v11-v1/NANOAODSIM & 0.5113 \\
+\cline{2-3}
+ & /ttHTobb\_M125\_TuneCP5\_13TeV-powheg-pythia8/RunIISummer20UL16NanoAODAPVv9-106X\_mcRun2\_asymptotic\_preVFP\_v11-v2/NANOAODSIM & 0.2934 \\
+\cline{2-3}
+ & /ttHToNonbb\_M125\_TuneCP5\_13TeV-powheg-pythia8/RunIISummer20UL16NanoAODAPVv9-106X\_mcRun2\_asymptotic\_preVFP\_v11-v2/NANOAODSIM & 0.2151 \\
+\cline{2-3}
+ & /TTGJets\_TuneCP5\_13TeV-amcatnloFXFX-madspin-pythia8/RunIISummer20UL16NanoAODAPVv9-106X\_mcRun2\_asymptotic\_preVFP\_v11-v2/NANOAODSIM & 3.757 \\
+\hline
+\multirow{1}{*}{tZq} & /tZq\_ll\_4f\_ckm\_NLO\_TuneCP5\_13TeV-amcatnlo-pythia8/RunIISummer20UL16NanoAODAPVv9-106X\_mcRun2\_asymptotic\_preVFP\_v11-v1/NANOAODSIM & 0.07561 \\
+\hline
+\multirow{6}{*}{Single-top} & /ST\_s-channel\_4f\_hadronicDecays\_TuneCP5\_13TeV-amcatnlo-pythia8/RunIISummer20UL16NanoAODAPVv9-106X\_mcRun2\_asymptotic\_preVFP\_v11-v1/NANOAODSIM & 7.104 \\
+\cline{2-3}
+ & /ST\_s-channel\_4f\_leptonDecays\_TuneCP5\_13TeV-amcatnlo-pythia8/RunIISummer20UL16NanoAODAPVv9-106X\_mcRun2\_asymptotic\_preVFP\_v11-v1/NANOAODSIM & 3.549 \\
+\cline{2-3}
+ & /ST\_tW\_antitop\_5f\_inclusiveDecays\_TuneCP5\_13TeV-powheg-pythia8/RunIISummer20UL16NanoAODAPVv9-106X\_mcRun2\_asymptotic\_preVFP\_v11-v1/NANOAODSIM & 32.51 \\
+\cline{2-3}
+ & /ST\_tW\_top\_5f\_inclusiveDecays\_TuneCP5\_13TeV-powheg-pythia8/RunIISummer20UL16NanoAODAPVv9-106X\_mcRun2\_asymptotic\_preVFP\_v11-v1/NANOAODSIM & 32.45 \\
+\cline{2-3}
+ & /ST\_t-channel\_top\_4f\_InclusiveDecays\_TuneCP5\_13TeV-powheg-madspin-pythia8/RunIISummer20UL16NanoAODAPVv9-106X\_mcRun2\_asymptotic\_preVFP\_v11-v1/NANOAODSIM & 113.4 \\
+\cline{2-3}
+ & /ST\_t-channel\_antitop\_4f\_InclusiveDecays\_TuneCP5\_13TeV-powheg-madspin-pythia8/RunIISummer20UL16NanoAODAPVv9-106X\_mcRun2\_asymptotic\_preVFP\_v11-v1/NANOAODSIM & 67.93 \\
+\hline
+\multirow{8}{*}{WJets} & /WJetsToQQ\_HT-400to600\_TuneCP5\_13TeV-madgraphMLM-pythia8/RunIISummer20UL16NanoAODAPVv9-106X\_mcRun2\_asymptotic\_preVFP\_v11-v2/NANOAODSIM & 276.5 \\
+\cline{2-3}
+ & /WJetsToQQ\_HT-600to800\_TuneCP5\_13TeV-madgraphMLM-pythia8/RunIISummer20UL16NanoAODAPVv9-106X\_mcRun2\_asymptotic\_preVFP\_v11-v2/NANOAODSIM & 59.25 \\
+\cline{2-3}
+ & /WJetsToQQ\_HT-800toInf\_TuneCP5\_13TeV-madgraphMLM-pythia8/RunIISummer20UL16NanoAODAPVv9-106X\_mcRun2\_asymptotic\_preVFP\_v11-v2/NANOAODSIM & 28.75 \\
+\cline{2-3}
+ & /WJetsToLNu\_HT-400To600\_TuneCP5\_13TeV-madgraphMLM-pythia8/RunIISummer20UL16NanoAODAPVv9-106X\_mcRun2\_asymptotic\_preVFP\_v11-v1/NANOAODSIM & 45.25 \\
+\cline{2-3}
+ & /WJetsToLNu\_HT-600To800\_TuneCP5\_13TeV-madgraphMLM-pythia8/RunIISummer20UL16NanoAODAPVv9-106X\_mcRun2\_asymptotic\_preVFP\_v11-v1/NANOAODSIM & 10.97 \\
+\cline{2-3}
+ & /WJetsToLNu\_HT-800To1200\_TuneCP5\_13TeV-madgraphMLM-pythia8/RunIISummer20UL16NanoAODAPVv9-106X\_mcRun2\_asymptotic\_preVFP\_v11-v1/NANOAODSIM & 4.933 \\
+\cline{2-3}
+ & /WJetsToLNu\_HT-1200To2500\_TuneCP5\_13TeV-madgraphMLM-pythia8/RunIISummer20UL16NanoAODAPVv9-106X\_mcRun2\_asymptotic\_preVFP\_v11-v1/NANOAODSIM & 1.16 \\
+\cline{2-3}
+ & /WJetsToLNu\_HT-2500ToInf\_TuneCP5\_13TeV-madgraphMLM-pythia8/RunIISummer20UL16NanoAODAPVv9-106X\_mcRun2\_asymptotic\_preVFP\_v11-v2/NANOAODSIM & 0.02646 \\
+\hline
+\multirow{8}{*}{ZJets} & /ZJetsToQQ\_HT-400to600\_TuneCP5\_13TeV-madgraphMLM-pythia8/RunIISummer20UL16NanoAODAPVv9-106X\_mcRun2\_asymptotic\_preVFP\_v11-v2/NANOAODSIM & 114.2 \\
+\cline{2-3}
+ & /ZJetsToQQ\_HT-600to800\_TuneCP5\_13TeV-madgraphMLM-pythia8/RunIISummer20UL16NanoAODAPVv9-106X\_mcRun2\_asymptotic\_preVFP\_v11-v2/NANOAODSIM & 25.34 \\
+\cline{2-3}
+ & /ZJetsToQQ\_HT-800toInf\_TuneCP5\_13TeV-madgraphMLM-pythia8/RunIISummer20UL16NanoAODAPVv9-106X\_mcRun2\_asymptotic\_preVFP\_v11-v2/NANOAODSIM & 13.1 \\
+\cline{2-3}
+ & /ZJetsToNuNu\_HT-400To600\_TuneCP5\_13TeV-madgraphMLM-pythia8/RunIISummer20UL16NanoAODAPVv9-106X\_mcRun2\_asymptotic\_preVFP\_v11-v2/NANOAODSIM & 9.904 \\
+\cline{2-3}
+ & /ZJetsToNuNu\_HT-600To800\_TuneCP5\_13TeV-madgraphMLM-pythia8/RunIISummer20UL16NanoAODAPVv9-106X\_mcRun2\_asymptotic\_preVFP\_v11-v2/NANOAODSIM & 2.413 \\
+\cline{2-3}
+ & /ZJetsToNuNu\_HT-800To1200\_TuneCP5\_13TeV-madgraphMLM-pythia8/RunIISummer20UL16NanoAODAPVv9-106X\_mcRun2\_asymptotic\_preVFP\_v11-v2/NANOAODSIM & 1.071 \\
+\cline{2-3}
+ & /ZJetsToNuNu\_HT-1200To2500\_TuneCP5\_13TeV-madgraphMLM-pythia8/RunIISummer20UL16NanoAODAPVv9-106X\_mcRun2\_asymptotic\_preVFP\_v11-v2/NANOAODSIM & 0.2497 \\
+\cline{2-3}
+ & /ZJetsToNuNu\_HT-2500ToInf\_TuneCP5\_13TeV-madgraphMLM-pythia8/RunIISummer20UL16NanoAODAPVv9-106X\_mcRun2\_asymptotic\_preVFP\_v11-v2/NANOAODSIM & 0.005618 \\
+\hline
+\multirow{5}{*}{other} & /WW\_TuneCP5\_13TeV-pythia8/RunIISummer20UL16NanoAODAPVv9-106X\_mcRun2\_asymptotic\_preVFP\_v11-v1/NANOAODSIM & 75.95 \\
+\cline{2-3}
+ & /WZ\_TuneCP5\_13TeV-pythia8/RunIISummer20UL16NanoAODAPVv9-106X\_mcRun2\_asymptotic\_preVFP\_v11-v1/NANOAODSIM & 27.59 \\
+\cline{2-3}
+ & /ZZ\_TuneCP5\_13TeV-pythia8/RunIISummer20UL16NanoAODAPVv9-106X\_mcRun2\_asymptotic\_preVFP\_v11-v1/NANOAODSIM & 12.17 \\
+\cline{2-3}
+ & /DYJetsToLL\_M-50\_TuneCP5\_13TeV-amcatnloFXFX-pythia8/RunIISummer20UL16NanoAODAPVv9-106X\_mcRun2\_asymptotic\_preVFP\_v11-v1/NANOAODSIM & 6404.0 \\
+\cline{2-3}
+ & /DYJetsToLL\_M-10to50\_TuneCP5\_13TeV-amcatnloFXFX-pythia8/RunIISummer20UL16NanoAODAPVv9-106X\_mcRun2\_asymptotic\_preVFP\_v11-v1/NANOAODSIM & 20460.0 \\
+\hline
+\end{longtable}
+
+\begin{longtable}{|>{\raggedright\arraybackslash}p{1.4cm}|>{\footnotesize\raggedright\arraybackslash}p{12cm}|>{\raggedright\arraybackslash}p{1.4cm}|}
+\caption{List of MC samples for year 2016.}\label{tab:mc2016} \\
+\hline
+\textbf{Category} & \textbf{MC Sample} & \textbf{Cross Section (pb)} \\
+\hline
+\endfirsthead
+\multicolumn{2}{c}{\textit{(Continued from previous page)}} \\
+\hline
+\textbf{Category} & \textbf{MC Sample} & \textbf{Cross Section (pb)} \\
+\hline
+\endhead
+\hline
+\multicolumn{2}{r}{\textit{(Continued on next page)}} \\
+\endfoot
+\hline
+\endlastfoot
+\multirow{1}{*}{TTTT} & /TTTT\_TuneCP5\_13TeV-amcatnlo-pythia8/RunIISummer20UL16NanoAODv9-106X\_mcRun2\_asymptotic\_v17-v2/NANOAODSIM & 0.01337 \\
+\hline
+\multirow{3}{*}{TT} & /TTToHadronic\_TuneCP5\_13TeV-powheg-pythia8/RunIISummer20UL16NanoAODv9-106X\_mcRun2\_asymptotic\_v17-v1/NANOAODSIM & 378.93 \\
+\cline{2-3}
+ & /TTToSemiLeptonic\_TuneCP5\_13TeV-powheg-pythia8/RunIISummer20UL16NanoAODv9-106X\_mcRun2\_asymptotic\_v17-v1/NANOAODSIM & 366.29 \\
+\cline{2-3}
+ & /TTTo2L2Nu\_TuneCP5\_13TeV-powheg-pythia8/RunIISummer20UL16NanoAODv9-106X\_mcRun2\_asymptotic\_v17-v1/NANOAODSIM & 88.51 \\
+\hline
+\multirow{7}{*}{QCD} & /QCD\_HT200to300\_TuneCP5\_PSWeights\_13TeV-madgraphMLM-pythia8/RunIISummer20UL16NanoAODv9-106X\_mcRun2\_asymptotic\_v17-v1/NANOAODSIM & 1554000.0 \\
+\cline{2-3}
+ & /QCD\_HT300to500\_TuneCP5\_PSWeights\_13TeV-madgraphMLM-pythia8/RunIISummer20UL16NanoAODv9-106X\_mcRun2\_asymptotic\_v17-v1/NANOAODSIM & 323800.0 \\
+\cline{2-3}
+ & /QCD\_HT500to700\_TuneCP5\_PSWeights\_13TeV-madgraphMLM-pythia8/RunIISummer20UL16NanoAODv9-106X\_mcRun2\_asymptotic\_v17-v1/NANOAODSIM & 30280.0 \\
+\cline{2-3}
+ & /QCD\_HT700to1000\_TuneCP5\_PSWeights\_13TeV-madgraphMLM-pythia8/RunIISummer20UL16NanoAODv9-106X\_mcRun2\_asymptotic\_v17-v1/NANOAODSIM & 6392.0 \\
+\cline{2-3}
+ & /QCD\_HT1000to1500\_TuneCP5\_PSWeights\_13TeV-madgraphMLM-pythia8/RunIISummer20UL16NanoAODv9-106X\_mcRun2\_asymptotic\_v17-v1/NANOAODSIM & 1118.0 \\
+\cline{2-3}
+ & /QCD\_HT1500to2000\_TuneCP5\_PSWeights\_13TeV-madgraphMLM-pythia8/RunIISummer20UL16NanoAODv9-106X\_mcRun2\_asymptotic\_v17-v1/NANOAODSIM & 108.9 \\
+\cline{2-3}
+ & /QCD\_HT2000toInf\_TuneCP5\_PSWeights\_13TeV-madgraphMLM-pythia8/RunIISummer20UL16NanoAODv9-106X\_mcRun2\_asymptotic\_v17-v1/NANOAODSIM & 21.93 \\
+\hline
+\multirow{7}{*}{ttX} & /TTWJetsToLNu\_TuneCP5\_13TeV-amcatnloFXFX-madspin-pythia8/RunIISummer20UL16NanoAODv9-106X\_mcRun2\_asymptotic\_v17-v1/NANOAODSIM & 0.2161 \\
+\cline{2-3}
+ & /TTWJetsToQQ\_TuneCP5\_13TeV-amcatnloFXFX-madspin-pythia8/RunIISummer20UL16NanoAODv9-106X\_mcRun2\_asymptotic\_v17-v1/NANOAODSIM & 0.4377 \\
+\cline{2-3}
+ & /TTZToLLNuNu\_M-10\_TuneCP5\_13TeV-amcatnlo-pythia8/RunIISummer20UL16NanoAODv9-106X\_mcRun2\_asymptotic\_v17-v1/NANOAODSIM & 0.2439 \\
+\cline{2-3}
+ & /TTZToQQ\_TuneCP5\_13TeV-amcatnlo-pythia8/RunIISummer20UL16NanoAODv9-106X\_mcRun2\_asymptotic\_v17-v1/NANOAODSIM & 0.5113 \\
+\cline{2-3}
+ & /ttHTobb\_M125\_TuneCP5\_13TeV-powheg-pythia8/RunIISummer20UL16NanoAODv9-106X\_mcRun2\_asymptotic\_v17-v2/NANOAODSIM & 0.2934 \\
+\cline{2-3}
+ & /ttHToNonbb\_M125\_TuneCP5\_13TeV-powheg-pythia8/RunIISummer20UL16NanoAODv9-106X\_mcRun2\_asymptotic\_v17-v2/NANOAODSIM & 0.2151 \\
+\cline{2-3}
+ & /TTGJets\_TuneCP5\_13TeV-amcatnloFXFX-madspin-pythia8/RunIISummer20UL16NanoAODv9-106X\_mcRun2\_asymptotic\_v17-v1/NANOAODSIM & 3.757 \\
+\hline
+\multirow{1}{*}{tZq} & /tZq\_ll\_4f\_ckm\_NLO\_TuneCP5\_13TeV-amcatnlo-pythia8/RunIISummer20UL16NanoAODv9-106X\_mcRun2\_asymptotic\_v17-v1/NANOAODSIM & 0.07561 \\
+\hline
+\multirow{6}{*}{Single-top} & /ST\_s-channel\_4f\_leptonDecays\_TuneCP5\_13TeV-amcatnlo-pythia8/RunIISummer20UL16NanoAODv9-106X\_mcRun2\_asymptotic\_v17-v1/NANOAODSIM & 3.549 \\
+\cline{2-3}
+ & /ST\_s-channel\_4f\_hadronicDecays\_TuneCP5\_13TeV-amcatnlo-pythia8/RunIISummer20UL16NanoAODv9-106X\_mcRun2\_asymptotic\_v17-v1/NANOAODSIM & 7.104 \\
+\cline{2-3}
+ & /ST\_tW\_antitop\_5f\_inclusiveDecays\_TuneCP5\_13TeV-powheg-pythia8/RunIISummer20UL16NanoAODv9-106X\_mcRun2\_asymptotic\_v17-v2/NANOAODSIM & 32.51 \\
+\cline{2-3}
+ & /ST\_tW\_top\_5f\_inclusiveDecays\_TuneCP5\_13TeV-powheg-pythia8/RunIISummer20UL16NanoAODv9-106X\_mcRun2\_asymptotic\_v17-v2/NANOAODSIM & 32.45 \\
+\cline{2-3}
+ & /ST\_t-channel\_top\_4f\_InclusiveDecays\_TuneCP5\_13TeV-powheg-madspin-pythia8/RunIISummer20UL16NanoAODv9-106X\_mcRun2\_asymptotic\_v17-v1/NANOAODSIM & 113.4 \\
+\cline{2-3}
+ & /ST\_t-channel\_antitop\_4f\_InclusiveDecays\_TuneCP5\_13TeV-powheg-madspin-pythia8/RunIISummer20UL16NanoAODv9-106X\_mcRun2\_asymptotic\_v17-v1/NANOAODSIM & 67.93 \\
+\hline
+\multirow{8}{*}{WJets} & /WJetsToQQ\_HT-400to600\_TuneCP5\_13TeV-madgraphMLM-pythia8/RunIISummer20UL16NanoAODv9-106X\_mcRun2\_asymptotic\_v17-v2/NANOAODSIM & 276.5 \\
+\cline{2-3}
+ & /WJetsToQQ\_HT-600to800\_TuneCP5\_13TeV-madgraphMLM-pythia8/RunIISummer20UL16NanoAODv9-106X\_mcRun2\_asymptotic\_v17-v2/NANOAODSIM & 59.25 \\
+\cline{2-3}
+ & /WJetsToQQ\_HT-800toInf\_TuneCP5\_13TeV-madgraphMLM-pythia8/RunIISummer20UL16NanoAODv9-106X\_mcRun2\_asymptotic\_v17-v2/NANOAODSIM & 28.75 \\
+\cline{2-3}
+ & /WJetsToLNu\_HT-400To600\_TuneCP5\_13TeV-madgraphMLM-pythia8/RunIISummer20UL16NanoAODv9-106X\_mcRun2\_asymptotic\_v17-v1/NANOAODSIM & 45.25 \\
+\cline{2-3}
+ & /WJetsToLNu\_HT-600To800\_TuneCP5\_13TeV-madgraphMLM-pythia8/RunIISummer20UL16NanoAODv9-106X\_mcRun2\_asymptotic\_v17-v1/NANOAODSIM & 10.97 \\
+\cline{2-3}
+ & /WJetsToLNu\_HT-800To1200\_TuneCP5\_13TeV-madgraphMLM-pythia8/RunIISummer20UL16NanoAODv9-106X\_mcRun2\_asymptotic\_v17-v1/NANOAODSIM & 4.933 \\
+\cline{2-3}
+ & /WJetsToLNu\_HT-1200To2500\_TuneCP5\_13TeV-madgraphMLM-pythia8/RunIISummer20UL16NanoAODv9-106X\_mcRun2\_asymptotic\_v17-v1/NANOAODSIM & 1.16 \\
+\cline{2-3}
+ & /WJetsToLNu\_HT-2500ToInf\_TuneCP5\_13TeV-madgraphMLM-pythia8/RunIISummer20UL16NanoAODv9-106X\_mcRun2\_asymptotic\_v17-v2/NANOAODSIM & 0.02646 \\
+\hline
+\multirow{8}{*}{ZJets} & /ZJetsToQQ\_HT-400to600\_TuneCP5\_13TeV-madgraphMLM-pythia8/RunIISummer20UL16NanoAODv9-106X\_mcRun2\_asymptotic\_v17-v2/NANOAODSIM & 114.2 \\
+\cline{2-3}
+ & /ZJetsToQQ\_HT-600to800\_TuneCP5\_13TeV-madgraphMLM-pythia8/RunIISummer20UL16NanoAODv9-106X\_mcRun2\_asymptotic\_v17-v2/NANOAODSIM & 25.34 \\
+\cline{2-3}
+ & /ZJetsToQQ\_HT-800toInf\_TuneCP5\_13TeV-madgraphMLM-pythia8/RunIISummer20UL16NanoAODv9-106X\_mcRun2\_asymptotic\_v17-v2/NANOAODSIM & 13.1 \\
+\cline{2-3}
+ & /ZJetsToNuNu\_HT-400To600\_TuneCP5\_13TeV-madgraphMLM-pythia8/RunIISummer20UL16NanoAODv9-106X\_mcRun2\_asymptotic\_v17-v2/NANOAODSIM & 9.904 \\
+\cline{2-3}
+ & /ZJetsToNuNu\_HT-600To800\_TuneCP5\_13TeV-madgraphMLM-pythia8/RunIISummer20UL16NanoAODv9-106X\_mcRun2\_asymptotic\_v17-v2/NANOAODSIM & 2.413 \\
+\cline{2-3}
+ & /ZJetsToNuNu\_HT-800To1200\_TuneCP5\_13TeV-madgraphMLM-pythia8/RunIISummer20UL16NanoAODv9-106X\_mcRun2\_asymptotic\_v17-v2/NANOAODSIM & 1.071 \\
+\cline{2-3}
+ & /ZJetsToNuNu\_HT-1200To2500\_TuneCP5\_13TeV-madgraphMLM-pythia8/RunIISummer20UL16NanoAODv9-106X\_mcRun2\_asymptotic\_v17-v2/NANOAODSIM & 0.2497 \\
+\cline{2-3}
+ & /ZJetsToNuNu\_HT-2500ToInf\_TuneCP5\_13TeV-madgraphMLM-pythia8/RunIISummer20UL16NanoAODv9-106X\_mcRun2\_asymptotic\_v17-v2/NANOAODSIM & 0.005618 \\
+\hline
+\multirow{5}{*}{other} & /WW\_TuneCP5\_13TeV-pythia8/RunIISummer20UL16NanoAODv9-106X\_mcRun2\_asymptotic\_v17-v1/NANOAODSIM & 75.95 \\
+\cline{2-3}
+ & /WZ\_TuneCP5\_13TeV-pythia8/RunIISummer20UL16NanoAODv9-106X\_mcRun2\_asymptotic\_v17-v1/NANOAODSIM & 27.59 \\
+\cline{2-3}
+ & /ZZ\_TuneCP5\_13TeV-pythia8/RunIISummer20UL16NanoAODv9-106X\_mcRun2\_asymptotic\_v17-v1/NANOAODSIM & 12.17 \\
+\cline{2-3}
+ & /DYJetsToLL\_M-50\_TuneCP5\_13TeV-amcatnloFXFX-pythia8/RunIISummer20UL16NanoAODv9-106X\_mcRun2\_asymptotic\_v17-v1/NANOAODSIM & 6404.0 \\
+\cline{2-3}
+ & /DYJetsToLL\_M-10to50\_TuneCP5\_13TeV-amcatnloFXFX-pythia8/RunIISummer20UL16NanoAODv9-106X\_mcRun2\_asymptotic\_v17-v1/NANOAODSIM & 20460.0 \\
+\hline
+\end{longtable}
+
+\begin{longtable}{|>{\raggedright\arraybackslash}p{1.4cm}|>{\footnotesize\raggedright\arraybackslash}p{12cm}|>{\raggedright\arraybackslash}p{1.4cm}|}
+\caption{List of MC samples for year 2017.}\label{tab:mc2017} \\
+\hline
+\textbf{Category} & \textbf{MC Sample} & \textbf{Cross Section (pb)} \\
+\hline
+\endfirsthead
+\multicolumn{2}{c}{\textit{(Continued from previous page)}} \\
+\hline
+\textbf{Category} & \textbf{MC Sample} & \textbf{Cross Section (pb)} \\
+\hline
+\endhead
+\hline
+\multicolumn{2}{r}{\textit{(Continued on next page)}} \\
+\endfoot
+\hline
+\endlastfoot
+\multirow{1}{*}{TTTT} & /TTTT\_TuneCP5\_13TeV-amcatnlo-pythia8/RunIISummer20UL17NanoAODv9-106X\_mc2017\_realistic\_v9-v2/NANOAODSIM & 0.01337 \\
+\hline
+\multirow{3}{*}{TT} & /TTToHadronic\_TuneCP5\_13TeV-powheg-pythia8/RunIISummer20UL17NanoAODv9-106X\_mc2017\_realistic\_v9-v1/NANOAODSIM & 378.93 \\
+\cline{2-3}
+ & /TTToSemiLeptonic\_TuneCP5\_13TeV-powheg-pythia8/RunIISummer20UL17NanoAODv9-106X\_mc2017\_realistic\_v9-v1/NANOAODSIM & 366.29 \\
+\cline{2-3}
+ & /TTTo2L2Nu\_TuneCP5\_13TeV-powheg-pythia8/RunIISummer20UL17NanoAODv9-106X\_mc2017\_realistic\_v9-v1/NANOAODSIM & 88.51 \\
+\hline
+\multirow{7}{*}{QCD} & /QCD\_HT200to300\_TuneCP5\_13TeV-madgraphMLM-pythia8/RunIISummer20UL17NanoAODv9-106X\_mc2017\_realistic\_v9-v1/NANOAODSIM & 1552000.0 \\
+\cline{2-3}
+ & /QCD\_HT300to500\_TuneCP5\_13TeV-madgraphMLM-pythia8/RunIISummer20UL17NanoAODv9-106X\_mc2017\_realistic\_v9-v1/NANOAODSIM & 321100.0 \\
+\cline{2-3}
+ & /QCD\_HT500to700\_TuneCP5\_13TeV-madgraphMLM-pythia8/RunIISummer20UL17NanoAODv9-106X\_mc2017\_realistic\_v9-v1/NANOAODSIM & 30250.0 \\
+\cline{2-3}
+ & /QCD\_HT700to1000\_TuneCP5\_13TeV-madgraphMLM-pythia8/RunIISummer20UL17NanoAODv9-106X\_mc2017\_realistic\_v9-v1/NANOAODSIM & 6398.0 \\
+\cline{2-3}
+ & /QCD\_HT1000to1500\_TuneCP5\_13TeV-madgraphMLM-pythia8/RunIISummer20UL17NanoAODv9-106X\_mc2017\_realistic\_v9-v1/NANOAODSIM & 1122.0 \\
+\cline{2-3}
+ & /QCD\_HT1500to2000\_TuneCP5\_13TeV-madgraphMLM-pythia8/RunIISummer20UL17NanoAODv9-106X\_mc2017\_realistic\_v9-v1/NANOAODSIM & 109.4 \\
+\cline{2-3}
+ & /QCD\_HT2000toInf\_TuneCP5\_13TeV-madgraphMLM-pythia8/RunIISummer20UL17NanoAODv9-106X\_mc2017\_realistic\_v9-v1/NANOAODSIM & 21.74 \\
+\hline
+\multirow{7}{*}{ttX} & /TTWJetsToLNu\_TuneCP5\_13TeV-amcatnloFXFX-madspin-pythia8/RunIISummer20UL17NanoAODv9-106X\_mc2017\_realistic\_v9-v1/NANOAODSIM & 0.2163 \\
+\cline{2-3}
+ & /TTWJetsToQQ\_TuneCP5\_13TeV-amcatnloFXFX-madspin-pythia8/RunIISummer20UL17NanoAODv9-106X\_mc2017\_realistic\_v9-v1/NANOAODSIM & 0.4432 \\
+\cline{2-3}
+ & /TTZToLLNuNu\_M-10\_TuneCP5\_13TeV-amcatnlo-pythia8/RunIISummer20UL17NanoAODv9-106X\_mc2017\_realistic\_v9-v1/NANOAODSIM & 0.2439 \\
+\cline{2-3}
+ & /TTZToQQ\_TuneCP5\_13TeV-amcatnlo-pythia8/RunIISummer20UL17NanoAODv9-106X\_mc2017\_realistic\_v9-v1/NANOAODSIM & 0.5113 \\
+\cline{2-3}
+ & /ttHTobb\_M125\_TuneCP5\_13TeV-powheg-pythia8/RunIISummer20UL17NanoAODv9-106X\_mc2017\_realistic\_v9-v2/NANOAODSIM & 0.2934 \\
+\cline{2-3}
+ & /ttHToNonbb\_M125\_TuneCP5\_13TeV-powheg-pythia8/RunIISummer20UL17NanoAODv9-106X\_mc2017\_realistic\_v9-v2/NANOAODSIM & 0.2151 \\
+\cline{2-3}
+ & /TTGJets\_TuneCP5\_13TeV-amcatnloFXFX-madspin-pythia8/RunIISummer20UL17NanoAODv9-106X\_mc2017\_realistic\_v9-v1/NANOAODSIM & 3.774 \\
+\hline
+\multirow{6}{*}{Single-top} & /ST\_s-channel\_4f\_leptonDecays\_TuneCP5\_13TeV-amcatnlo-pythia8/RunIISummer20UL17NanoAODv9-106X\_mc2017\_realistic\_v9-v1/NANOAODSIM & 3.549 \\
+\cline{2-3}
+ & /ST\_s-channel\_4f\_hadronicDecays\_TuneCP5\_13TeV-amcatnlo-pythia8/RunIISummer20UL17NanoAODv9-106X\_mc2017\_realistic\_v9-v1/NANOAODSIM & 7.104 \\
+\cline{2-3}
+ & /ST\_tW\_antitop\_5f\_inclusiveDecays\_TuneCP5\_13TeV-powheg-pythia8/RunIISummer20UL17NanoAODv9-106X\_mc2017\_realistic\_v9-v2/NANOAODSIM & 32.51 \\
+\cline{2-3}
+ & /ST\_tW\_top\_5f\_inclusiveDecays\_TuneCP5\_13TeV-powheg-pythia8/RunIISummer20UL17NanoAODv9-106X\_mc2017\_realistic\_v9-v2/NANOAODSIM & 32.45 \\
+\cline{2-3}
+ & /ST\_t-channel\_top\_4f\_InclusiveDecays\_TuneCP5\_13TeV-powheg-madspin-pythia8/RunIISummer20UL17NanoAODv9-106X\_mc2017\_realistic\_v9-v1/NANOAODSIM & 113.4 \\
+\cline{2-3}
+ & /ST\_t-channel\_antitop\_4f\_InclusiveDecays\_TuneCP5\_13TeV-powheg-madspin-pythia8/RunIISummer20UL17NanoAODv9-106X\_mc2017\_realistic\_v9-v1/NANOAODSIM & 67.93 \\
+\hline
+\multirow{8}{*}{WJets} & /WJetsToQQ\_HT-400to600\_TuneCP5\_13TeV-madgraphMLM-pythia8/RunIISummer20UL17NanoAODv9-106X\_mc2017\_realistic\_v9-v2/NANOAODSIM & 275.4 \\
+\cline{2-3}
+ & /WJetsToQQ\_HT-600to800\_TuneCP5\_13TeV-madgraphMLM-pythia8/RunIISummer20UL17NanoAODv9-106X\_mc2017\_realistic\_v9-v2/NANOAODSIM & 59.55 \\
+\cline{2-3}
+ & /WJetsToQQ\_HT-800toInf\_TuneCP5\_13TeV-madgraphMLM-pythia8/RunIISummer20UL17NanoAODv9-106X\_mc2017\_realistic\_v9-v2/NANOAODSIM & 29.1 \\
+\cline{2-3}
+ & /WJetsToLNu\_HT-400To600\_TuneCP5\_13TeV-madgraphMLM-pythia8/RunIISummer20UL17NanoAODv9-106X\_mc2017\_realistic\_v9-v1/NANOAODSIM & 44.93 \\
+\cline{2-3}
+ & /WJetsToLNu\_HT-600To800\_TuneCP5\_13TeV-madgraphMLM-pythia8/RunIISummer20UL17NanoAODv9-106X\_mc2017\_realistic\_v9-v1/NANOAODSIM & 11.19 \\
+\cline{2-3}
+ & /WJetsToLNu\_HT-800To1200\_TuneCP5\_13TeV-madgraphMLM-pythia8/RunIISummer20UL17NanoAODv9-106X\_mc2017\_realistic\_v9-v3/NANOAODSIM & 4.926 \\
+\cline{2-3}
+ & /WJetsToLNu\_HT-1200To2500\_TuneCP5\_13TeV-madgraphMLM-pythia8/RunIISummer20UL17NanoAODv9-106X\_mc2017\_realistic\_v9-v1/NANOAODSIM & 1.152 \\
+\cline{2-3}
+ & /WJetsToLNu\_HT-2500ToInf\_TuneCP5\_13TeV-madgraphMLM-pythia8/RunIISummer20UL17NanoAODv9-106X\_mc2017\_realistic\_v9-v2/NANOAODSIM & 0.02646 \\
+\hline
+\multirow{8}{*}{ZJets} & /ZJetsToQQ\_HT-400to600\_TuneCP5\_13TeV-madgraphMLM-pythia8/RunIISummer20UL17NanoAODv9-106X\_mc2017\_realistic\_v9-v2/NANOAODSIM & 116.4 \\
+\cline{2-3}
+ & /ZJetsToQQ\_HT-600to800\_TuneCP5\_13TeV-madgraphMLM-pythia8/RunIISummer20UL17NanoAODv9-106X\_mc2017\_realistic\_v9-v2/NANOAODSIM & 25.47 \\
+\cline{2-3}
+ & /ZJetsToQQ\_HT-800toInf\_TuneCP5\_13TeV-madgraphMLM-pythia8/RunIISummer20UL17NanoAODv9-106X\_mc2017\_realistic\_v9-v2/NANOAODSIM & 13.1 \\
+\cline{2-3}
+ & /ZJetsToNuNu\_HT-400To600\_TuneCP5\_13TeV-madgraphMLM-pythia8/RunIISummer20UL17NanoAODv9-106X\_mc2017\_realistic\_v9-v1/NANOAODSIM & 9.961 \\
+\cline{2-3}
+ & /ZJetsToNuNu\_HT-600To800\_TuneCP5\_13TeV-madgraphMLM-pythia8/RunIISummer20UL17NanoAODv9-106X\_mc2017\_realistic\_v9-v1/NANOAODSIM & 2.425 \\
+\cline{2-3}
+ & /ZJetsToNuNu\_HT-800To1200\_TuneCP5\_13TeV-madgraphMLM-pythia8/RunIISummer20UL17NanoAODv9-106X\_mc2017\_realistic\_v9-v1/NANOAODSIM & 1.076 \\
+\cline{2-3}
+ & /ZJetsToNuNu\_HT-1200To2500\_TuneCP5\_13TeV-madgraphMLM-pythia8/RunIISummer20UL17NanoAODv9-106X\_mc2017\_realistic\_v9-v1/NANOAODSIM & 0.2474 \\
+\cline{2-3}
+ & /ZJetsToNuNu\_HT-2500ToInf\_TuneCP5\_13TeV-madgraphMLM-pythia8/RunIISummer20UL17NanoAODv9-106X\_mc2017\_realistic\_v9-v1/NANOAODSIM & 0.005609 \\
+\hline
+\multirow{5}{*}{other} & /WW\_TuneCP5\_13TeV-pythia8/RunIISummer20UL17NanoAODv9-106X\_mc2017\_realistic\_v9-v1/NANOAODSIM & 76.25 \\
+\cline{2-3}
+ & /WZ\_TuneCP5\_13TeV-pythia8/RunIISummer20UL17NanoAODv9-106X\_mc2017\_realistic\_v9-v1/NANOAODSIM & 27.55 \\
+\cline{2-3}
+ & /ZZ\_TuneCP5\_13TeV-pythia8/RunIISummer20UL17NanoAODv9-106X\_mc2017\_realistic\_v9-v1/NANOAODSIM & 12.23 \\
+\cline{2-3}
+ & /DYJetsToLL\_M-50\_TuneCP5\_13TeV-amcatnloFXFX-pythia8/RunIISummer20UL17NanoAODv9-106X\_mc2017\_realistic\_v9-v2/NANOAODSIM & 6424.0 \\
+\cline{2-3}
+ & /DYJetsToLL\_M-10to50\_TuneCP5\_13TeV-madgraphMLM-pythia8/RunIISummer20UL17NanoAODv9-106X\_mc2017\_realistic\_v9-v1/NANOAODSIM & 15910.0 \\
+\hline
+\end{longtable}
+
+\begin{longtable}{|>{\raggedright\arraybackslash}p{1.4cm}|>{\footnotesize\raggedright\arraybackslash}p{12cm}|>{\raggedright\arraybackslash}p{1.4cm}|}
+\caption{List of MC samples for year 2018.}\label{tab:mc2018} \\
+\hline
+\textbf{Category} & \textbf{MC Sample} & \textbf{Cross Section (pb)} \\
+\hline
+\endfirsthead
+\multicolumn{2}{c}{\textit{(Continued from previous page)}} \\
+\hline
+\textbf{Category} & \textbf{MC Sample} & \textbf{Cross Section (pb)} \\
+\hline
+\endhead
+\hline
+\multicolumn{2}{r}{\textit{(Continued on next page)}} \\
+\endfoot
+\hline
+\endlastfoot
+\multirow{1}{*}{TTTT} & /TTTT\_TuneCP5\_13TeV-amcatnlo-pythia8/RunIISummer20UL18NanoAODv9-106X\_upgrade2018\_realistic\_v16\_L1v1-v2/NANOAODSIM & 0.01337 \\
+\hline
+\multirow{3}{*}{TT} & /TTToHadronic\_TuneCP5\_13TeV-powheg-pythia8/RunIISummer20UL18NanoAODv9-106X\_upgrade2018\_realistic\_v16\_L1v1-v1/NANOAODSIM & 378.93 \\
+\cline{2-3}
+ & /TTToSemiLeptonic\_TuneCP5\_13TeV-powheg-pythia8/RunIISummer20UL18NanoAODv9-106X\_upgrade2018\_realistic\_v16\_L1v1-v1/NANOAODSIM & 366.29 \\
+\cline{2-3}
+ & /TTTo2L2Nu\_TuneCP5\_13TeV-powheg-pythia8/RunIISummer20UL18NanoAODv9-106X\_upgrade2018\_realistic\_v16\_L1v1-v1/NANOAODSIM & 88.51 \\
+\hline
+\multirow{7}{*}{QCD} & /QCD\_HT200to300\_TuneCP5\_13TeV-madgraphMLM-pythia8/RunIISummer20UL18NanoAODv9-106X\_upgrade2018\_realistic\_v16\_L1v1-v1/NANOAODSIM & 1554000.0 \\
+\cline{2-3}
+ & /QCD\_HT300to500\_TuneCP5\_13TeV-madgraphMLM-pythia8/RunIISummer20UL18NanoAODv9-106X\_upgrade2018\_realistic\_v16\_L1v1-v1/NANOAODSIM & 323800.0 \\
+\cline{2-3}
+ & /QCD\_HT500to700\_TuneCP5\_13TeV-madgraphMLM-pythia8/RunIISummer20UL18NanoAODv9-106X\_upgrade2018\_realistic\_v16\_L1v1-v1/NANOAODSIM & 30280.0 \\
+\cline{2-3}
+ & /QCD\_HT700to1000\_TuneCP5\_13TeV-madgraphMLM-pythia8/RunIISummer20UL18NanoAODv9-106X\_upgrade2018\_realistic\_v16\_L1v1-v1/NANOAODSIM & 6392.0 \\
+\cline{2-3}
+ & /QCD\_HT1000to1500\_TuneCP5\_13TeV-madgraphMLM-pythia8/RunIISummer20UL18NanoAODv9-106X\_upgrade2018\_realistic\_v16\_L1v1-v1/NANOAODSIM & 1118.0 \\
+\cline{2-3}
+ & /QCD\_HT1500to2000\_TuneCP5\_13TeV-madgraphMLM-pythia8/RunIISummer20UL18NanoAODv9-106X\_upgrade2018\_realistic\_v16\_L1v1-v1/NANOAODSIM & 108.9 \\
+\cline{2-3}
+ & /QCD\_HT2000toInf\_TuneCP5\_13TeV-madgraphMLM-pythia8/RunIISummer20UL18NanoAODv9-106X\_upgrade2018\_realistic\_v16\_L1v1-v1/NANOAODSIM & 21.93 \\
+\hline
+\multirow{7}{*}{ttX} & /TTWJetsToLNu\_TuneCP5\_13TeV-amcatnloFXFX-madspin-pythia8/RunIISummer20UL18NanoAODv9-106X\_upgrade2018\_realistic\_v16\_L1v1-v1/NANOAODSIM & 0.2161 \\
+\cline{2-3}
+ & /TTWJetsToQQ\_TuneCP5\_13TeV-amcatnloFXFX-madspin-pythia8/RunIISummer20UL18NanoAODv9-106X\_upgrade2018\_realistic\_v16\_L1v1-v1/NANOAODSIM & 0.4377 \\
+\cline{2-3}
+ & /TTZToLLNuNu\_M-10\_TuneCP5\_13TeV-amcatnlo-pythia8/RunIISummer20UL18NanoAODv9-106X\_upgrade2018\_realistic\_v16\_L1v1-v1/NANOAODSIM & 0.2439 \\
+\cline{2-3}
+ & /TTZToQQ\_TuneCP5\_13TeV-amcatnlo-pythia8/RunIISummer20UL18NanoAODv9-106X\_upgrade2018\_realistic\_v16\_L1v1-v1/NANOAODSIM & 0.5113 \\
+\cline{2-3}
+ & /ttHTobb\_M125\_TuneCP5\_13TeV-powheg-pythia8/RunIISummer20UL18NanoAODv9-106X\_upgrade2018\_realistic\_v16\_L1v1-v2/NANOAODSIM & 0.2934 \\
+\cline{2-3}
+ & /ttHToNonbb\_M125\_TuneCP5\_13TeV-powheg-pythia8/RunIISummer20UL18NanoAODv9-106X\_upgrade2018\_realistic\_v16\_L1v1-v2/NANOAODSIM & 0.2151 \\
+\cline{2-3}
+ & /TTGJets\_TuneCP5\_13TeV-amcatnloFXFX-madspin-pythia8/RunIISummer20UL18NanoAODv9-106X\_upgrade2018\_realistic\_v16\_L1v1-v1/NANOAODSIM & 3.757 \\
+\hline
+\multirow{6}{*}{Single-top} & /ST\_s-channel\_4f\_leptonDecays\_TuneCP5\_13TeV-amcatnlo-pythia8/RunIISummer20UL18NanoAODv9-106X\_upgrade2018\_realistic\_v16\_L1v1-v1/NANOAODSIM & 3.549 \\
+\cline{2-3}
+ & /ST\_s-channel\_4f\_hadronicDecays\_TuneCP5\_13TeV-amcatnlo-pythia8/RunIISummer20UL18NanoAODv9-106X\_upgrade2018\_realistic\_v16\_L1v1-v1/NANOAODSIM & 7.104 \\
+\cline{2-3}
+ & /ST\_tW\_antitop\_5f\_inclusiveDecays\_TuneCP5\_13TeV-powheg-pythia8/RunIISummer20UL18NanoAODv9-106X\_upgrade2018\_realistic\_v16\_L1v1-v2/NANOAODSIM & 32.51 \\
+\cline{2-3}
+ & /ST\_tW\_top\_5f\_inclusiveDecays\_TuneCP5\_13TeV-powheg-pythia8/RunIISummer20UL18NanoAODv9-106X\_upgrade2018\_realistic\_v16\_L1v1-v2/NANOAODSIM & 32.45 \\
+\cline{2-3}
+ & /ST\_t-channel\_top\_4f\_InclusiveDecays\_TuneCP5\_13TeV-powheg-madspin-pythia8/RunIISummer20UL18NanoAODv9-106X\_upgrade2018\_realistic\_v16\_L1v1-v1/NANOAODSIM & 113.4 \\
+\cline{2-3}
+ & /ST\_t-channel\_antitop\_4f\_InclusiveDecays\_TuneCP5\_13TeV-powheg-madspin-pythia8/RunIISummer20UL18NanoAODv9-106X\_upgrade2018\_realistic\_v16\_L1v1-v1/NANOAODSIM & 67.93 \\
+\hline
+\multirow{8}{*}{WJets} & /WJetsToQQ\_HT-400to600\_TuneCP5\_13TeV-madgraphMLM-pythia8/RunIISummer20UL18NanoAODv9-106X\_upgrade2018\_realistic\_v16\_L1v1-v2/NANOAODSIM & 276.5 \\
+\cline{2-3}
+ & /WJetsToQQ\_HT-600to800\_TuneCP5\_13TeV-madgraphMLM-pythia8/RunIISummer20UL18NanoAODv9-106X\_upgrade2018\_realistic\_v16\_L1v1-v2/NANOAODSIM & 59.25 \\
+\cline{2-3}
+ & /WJetsToQQ\_HT-800toInf\_TuneCP5\_13TeV-madgraphMLM-pythia8/RunIISummer20UL18NanoAODv9-106X\_upgrade2018\_realistic\_v16\_L1v1-v2/NANOAODSIM & 28.75 \\
+\cline{2-3}
+ & /WJetsToLNu\_HT-400To600\_TuneCP5\_13TeV-madgraphMLM-pythia8/RunIISummer20UL18NanoAODv9-106X\_upgrade2018\_realistic\_v16\_L1v1-v1/NANOAODSIM & 45.25 \\
+\cline{2-3}
+ & /WJetsToLNu\_HT-600To800\_TuneCP5\_13TeV-madgraphMLM-pythia8/RunIISummer20UL18NanoAODv9-106X\_upgrade2018\_realistic\_v16\_L1v1-v1/NANOAODSIM & 10.97 \\
+\cline{2-3}
+ & /WJetsToLNu\_HT-800To1200\_TuneCP5\_13TeV-madgraphMLM-pythia8/RunIISummer20UL18NanoAODv9-106X\_upgrade2018\_realistic\_v16\_L1v1-v1/NANOAODSIM & 4.933 \\
+\cline{2-3}
+ & /WJetsToLNu\_HT-1200To2500\_TuneCP5\_13TeV-madgraphMLM-pythia8/RunIISummer20UL18NanoAODv9-106X\_upgrade2018\_realistic\_v16\_L1v1-v1/NANOAODSIM & 1.16 \\
+\cline{2-3}
+ & /WJetsToLNu\_HT-2500ToInf\_TuneCP5\_13TeV-madgraphMLM-pythia8/RunIISummer20UL18NanoAODv9-106X\_upgrade2018\_realistic\_v16\_L1v1-v2/NANOAODSIM & 0.02646 \\
+\hline
+\multirow{8}{*}{ZJets} & /ZJetsToQQ\_HT-400to600\_TuneCP5\_13TeV-madgraphMLM-pythia8/RunIISummer20UL18NanoAODv9-106X\_upgrade2018\_realistic\_v16\_L1v1-v2/NANOAODSIM & 114.2 \\
+\cline{2-3}
+ & /ZJetsToQQ\_HT-600to800\_TuneCP5\_13TeV-madgraphMLM-pythia8/RunIISummer20UL18NanoAODv9-106X\_upgrade2018\_realistic\_v16\_L1v1-v2/NANOAODSIM & 25.34 \\
+\cline{2-3}
+ & /ZJetsToQQ\_HT-800toInf\_TuneCP5\_13TeV-madgraphMLM-pythia8/RunIISummer20UL18NanoAODv9-106X\_upgrade2018\_realistic\_v16\_L1v1-v2/NANOAODSIM & 13.1 \\
+\cline{2-3}
+ & /ZJetsToNuNu\_HT-400To600\_TuneCP5\_13TeV-madgraphMLM-pythia8/RunIISummer20UL18NanoAODv9-106X\_upgrade2018\_realistic\_v16\_L1v1-v1/NANOAODSIM & 9.904 \\
+\cline{2-3}
+ & /ZJetsToNuNu\_HT-600To800\_TuneCP5\_13TeV-madgraphMLM-pythia8/RunIISummer20UL18NanoAODv9-106X\_upgrade2018\_realistic\_v16\_L1v1-v1/NANOAODSIM & 2.413 \\
+\cline{2-3}
+ & /ZJetsToNuNu\_HT-800To1200\_TuneCP5\_13TeV-madgraphMLM-pythia8/RunIISummer20UL18NanoAODv9-106X\_upgrade2018\_realistic\_v16\_L1v1-v1/NANOAODSIM & 1.071 \\
+\cline{2-3}
+ & /ZJetsToNuNu\_HT-1200To2500\_TuneCP5\_13TeV-madgraphMLM-pythia8/RunIISummer20UL18NanoAODv9-106X\_upgrade2018\_realistic\_v16\_L1v1-v1/NANOAODSIM & 0.2497 \\
+\cline{2-3}
+ & /ZJetsToNuNu\_HT-2500ToInf\_TuneCP5\_13TeV-madgraphMLM-pythia8/RunIISummer20UL18NanoAODv9-106X\_upgrade2018\_realistic\_v16\_L1v1-v1/NANOAODSIM & 0.005618 \\
+\hline
+\multirow{5}{*}{other} & /WW\_TuneCP5\_13TeV-pythia8/RunIISummer20UL18NanoAODv9-106X\_upgrade2018\_realistic\_v16\_L1v1-v1/NANOAODSIM & 75.95 \\
+\cline{2-3}
+ & /WZ\_TuneCP5\_13TeV-pythia8/RunIISummer20UL18NanoAODv9-106X\_upgrade2018\_realistic\_v16\_L1v1-v1/NANOAODSIM & 27.59 \\
+\cline{2-3}
+ & /ZZ\_TuneCP5\_13TeV-pythia8/RunIISummer20UL18NanoAODv9-106X\_upgrade2018\_realistic\_v16\_L1v1-v1/NANOAODSIM & 12.17 \\
+\cline{2-3}
+ & /DYJetsToLL\_M-50\_TuneCP5\_13TeV-amcatnloFXFX-pythia8/RunIISummer20UL18NanoAODv9-106X\_upgrade2018\_realistic\_v16\_L1v1-v2/NANOAODSIM & 6404.0 \\
+\cline{2-3}
+ & /DYJetsToLL\_M-10to50\_TuneCP5\_13TeV-madgraphMLM-pythia8/RunIISummer20UL18NanoAODv9-106X\_upgrade2018\_realistic\_v16\_L1v1-v1/NANOAODSIM & 20460.0 \\
+\hline
+\end{longtable}
+
+\begin{longtable}{|>{\raggedright\arraybackslash}p{1.4cm}|>{\footnotesize\raggedright\arraybackslash}p{12cm}|>{\raggedright\arraybackslash}p{1.4cm}|}
+\caption{List of MC samples for year 2022.}\label{tab:mc2022} \\
+\hline
+\textbf{Category} & \textbf{MC Sample} & \textbf{Cross Section (pb)} \\
+\hline
+\endfirsthead
+\multicolumn{2}{c}{\textit{(Continued from previous page)}} \\
+\hline
+\textbf{Category} & \textbf{MC Sample} & \textbf{Cross Section (pb)} \\
+\hline
+\endhead
+\hline
+\multicolumn{2}{r}{\textit{(Continued on next page)}} \\
+\endfoot
+\hline
+\endlastfoot
+\multirow{1}{*}{TTTT} & /TTTT\_TuneCP5\_13p6TeV\_amcatnlo-pythia8/Run3Summer22NanoAODv12-130X\_mcRun3\_2022\_realistic\_v5-v2/NANOAODSIM & 0.01582 \\
+\hline
+\multirow{3}{*}{TT} & /TTto4Q\_TuneCP5\_13p6TeV\_powheg-pythia8/Run3Summer22NanoAODv12-130X\_mcRun3\_2022\_realistic\_v5-v2/NANOAODSIM & 419.69 \\
+\cline{2-3}
+ & /TTtoLNu2Q\_TuneCP5\_13p6TeV\_powheg-pythia8/Run3Summer22NanoAODv12-130X\_mcRun3\_2022\_realistic\_v5-v2/NANOAODSIM & 404.64 \\
+\cline{2-3}
+ & /TTto2L2Nu\_TuneCP5\_13p6TeV\_powheg-pythia8/Run3Summer22NanoAODv12-130X\_mcRun3\_2022\_realistic\_v5-v2/NANOAODSIM & 98.03 \\
+\hline
+\multirow{9}{*}{QCD} & /QCD-4Jets\_HT-1000to1200\_TuneCP5\_13p6TeV\_madgraphMLM-pythia8/Run3Summer22NanoAODv12-130X\_mcRun3\_2022\_realistic\_v5-v2/NANOAODSIM & 883.7 \\
+\cline{2-3}
+ & /QCD-4Jets\_HT-1200to1500\_TuneCP5\_13p6TeV\_madgraphMLM-pythia8/Run3Summer22NanoAODv12-130X\_mcRun3\_2022\_realistic\_v5-v2/NANOAODSIM & 383.5 \\
+\cline{2-3}
+ & /QCD-4Jets\_HT-1500to2000\_TuneCP5\_13p6TeV\_madgraphMLM-pythia8/Run3Summer22NanoAODv12-130X\_mcRun3\_2022\_realistic\_v5-v2/NANOAODSIM & 125.2 \\
+\cline{2-3}
+ & /QCD-4Jets\_HT-2000\_TuneCP5\_13p6TeV\_madgraphMLM-pythia8/Run3Summer22NanoAODv12-130X\_mcRun3\_2022\_realistic\_v5-v2/NANOAODSIM & 26.49 \\
+\cline{2-3}
+ & /QCD-4Jets\_HT-200to400\_TuneCP5\_13p6TeV\_madgraphMLM-pythia8/Run3Summer22NanoAODv12-130X\_mcRun3\_2022\_realistic\_v5-v2/NANOAODSIM & 1961000.0 \\
+\cline{2-3}
+ & /QCD-4Jets\_HT-400to600\_TuneCP5\_13p6TeV\_madgraphMLM-pythia8/Run3Summer22NanoAODv12-130X\_mcRun3\_2022\_realistic\_v5-v2/NANOAODSIM & 95620.0 \\
+\cline{2-3}
+ & /QCD-4Jets\_HT-600to800\_TuneCP5\_13p6TeV\_madgraphMLM-pythia8/Run3Summer22NanoAODv12-130X\_mcRun3\_2022\_realistic\_v5-v2/NANOAODSIM & 13540.0 \\
+\cline{2-3}
+ & /QCD-4Jets\_HT-70to100\_TuneCP5\_13p6TeV\_madgraphMLM-pythia8/Run3Summer22NanoAODv12-130X\_mcRun3\_2022\_realistic\_v5-v2/NANOAODSIM & 58500000.0 \\
+\cline{2-3}
+ & /QCD-4Jets\_HT-800to1000\_TuneCP5\_13p6TeV\_madgraphMLM-pythia8/Run3Summer22NanoAODv12-130X\_mcRun3\_2022\_realistic\_v5-v2/NANOAODSIM & 3033.0 \\
+\hline
+\multirow{10}{*}{ttX} & /TTLNu-1Jets\_TuneCP5\_13p6TeV\_amcatnloFXFX-pythia8/Run3Summer22NanoAODv12-130X\_mcRun3\_2022\_realistic\_v5-v1/NANOAODSIM & 0.2505 \\
+\cline{2-3}
+ & /TTLL\_MLL-4to50\_TuneCP5\_13p6TeV\_amcatnlo-pythia8/Run3Summer22NanoAODv12-130X\_mcRun3\_2022\_realistic\_v5-v2/NANOAODSIM & 0.03949 \\
+\cline{2-3}
+ & /TTLL\_MLL-50\_TuneCP5\_13p6TeV\_amcatnlo-pythia8/Run3Summer22NanoAODv12-130X\_mcRun3\_2022\_realistic\_v5-v2/NANOAODSIM & 0.08646 \\
+\cline{2-3}
+ & /TTNuNu\_TuneCP5\_13p6TeV\_amcatnlo-pythia8/Run3Summer22NanoAODv12-130X\_mcRun3\_2022\_realistic\_v5-v2/NANOAODSIM & 0.1638 \\
+\cline{2-3}
+ & /TTZ-ZtoQQ-1Jets\_TuneCP5\_13p6TeV\_amcatnloFXFX-pythia8/Run3Summer22NanoAODv12-130X\_mcRun3\_2022\_realistic\_v5-v2/NANOAODSIM & 0.6603 \\
+\cline{2-3}
+ & /TTH\_Hto2B\_M-125\_TuneCP5\_13p6TeV\_powheg-pythia8/Run3Summer22NanoAODv12-130X\_mcRun3\_2022\_realistic\_v5-v3/NANOAODSIM & 0.3257 \\
+\cline{2-3}
+ & /TTHtoNon2B\_M-125\_TuneCP5\_13p6TeV\_powheg-pythia8/Run3Summer22NanoAODv12-130X\_mcRun3\_2022\_realistic\_v5-v4/NANOAODSIM & 0.2381 \\
+\cline{2-3}
+ & /TTG-1Jets\_PTG-10to100\_TuneCP5\_13p6TeV\_amcatnloFXFXold-pythia8/Run3Summer22NanoAODv12-130X\_mcRun3\_2022\_realistic\_v5-v1/NANOAODSIM & 4.216 \\
+\cline{2-3}
+ & /TTG-1Jets\_PTG-100to200\_TuneCP5\_13p6TeV\_amcatnloFXFXold-pythia8/Run3Summer22NanoAODv12-130X\_mcRun3\_2022\_realistic\_v5-v3/NANOAODSIM & 0.4114 \\
+\cline{2-3}
+ & /TTG-1Jets\_PTG-200\_TuneCP5\_13p6TeV\_amcatnloFXFXold-pythia8/Run3Summer22NanoAODv12-130X\_mcRun3\_2022\_realistic\_v5-v3/NANOAODSIM & 0.1284 \\
+\hline
+\multirow{10}{*}{Single-top} & /TbarBQ\_t-channel\_4FS\_TuneCP5\_13p6TeV\_powheg-madspin-pythia8/Run3Summer22NanoAODv12-130X\_mcRun3\_2022\_realistic\_v5-v2/NANOAODSIM & 75.47 \\
+\cline{2-3}
+ & /TBbarQ\_t-channel\_4FS\_TuneCP5\_13p6TeV\_powheg-madspin-pythia8/Run3Summer22NanoAODv12-130X\_mcRun3\_2022\_realistic\_v5-v2/NANOAODSIM & 123.8 \\
+\cline{2-3}
+ & /TbarWplusto2L2Nu\_TuneCP5\_13p6TeV\_powheg-pythia8/Run3Summer22NanoAODv12-130X\_mcRun3\_2022\_realistic\_v5-v2/NANOAODSIM & 4.663 \\
+\cline{2-3}
+ & /TbarWplusto4Q\_TuneCP5\_13p6TeV\_powheg-pythia8/Run3Summer22NanoAODv12-130X\_mcRun3\_2022\_realistic\_v5-v2/NANOAODSIM & 19.971 \\
+\cline{2-3}
+ & /TbarWplustoLNu2Q\_TuneCP5\_13p6TeV\_powheg-pythia8/Run3Summer22NanoAODv12-130X\_mcRun3\_2022\_realistic\_v5-v2/NANOAODSIM & 19.303 \\
+\cline{2-3}
+ & /TWminusto2L2Nu\_TuneCP5\_13p6TeV\_powheg-pythia8/Run3Summer22NanoAODv12-130X\_mcRun3\_2022\_realistic\_v5-v2/NANOAODSIM & 4.663 \\
+\cline{2-3}
+ & /TWminusto4Q\_TuneCP5\_13p6TeV\_powheg-pythia8/Run3Summer22NanoAODv12-130X\_mcRun3\_2022\_realistic\_v5-v2/NANOAODSIM & 19.971 \\
+\cline{2-3}
+ & /TWminustoLNu2Q\_TuneCP5\_13p6TeV\_powheg-pythia8/Run3Summer22NanoAODv12-130X\_mcRun3\_2022\_realistic\_v5-v2/NANOAODSIM & 19.303 \\
+\cline{2-3}
+ & /TBbartoLplusNuBbar-s-channel-4FS\_TuneCP5\_13p6TeV\_amcatnlo-pythia8/Run3Summer22NanoAODv12-130X\_mcRun3\_2022\_realistic\_v5-v2/NANOAODSIM & 2.278 \\
+\cline{2-3}
+ & /TbarBtoLminusNuB-s-channel-4FS\_TuneCP5\_13p6TeV\_amcatnlo-pythia8/Run3Summer22NanoAODv12-130X\_mcRun3\_2022\_realistic\_v5-v2/NANOAODSIM & 1.43 \\
+\hline
+\multirow{5}{*}{WJets} & /Wto2Q-3Jets\_HT-200to400\_TuneCP5\_13p6TeV\_madgraphMLM-pythia8/Run3Summer22NanoAODv12-130X\_mcRun3\_2022\_realistic\_v5-v2/NANOAODSIM & 2723.0 \\
+\cline{2-3}
+ & /Wto2Q-3Jets\_HT-400to600\_TuneCP5\_13p6TeV\_madgraphMLM-pythia8/Run3Summer22NanoAODv12-130X\_mcRun3\_2022\_realistic\_v5-v2/NANOAODSIM & 299.8 \\
+\cline{2-3}
+ & /Wto2Q-3Jets\_HT-600to800\_TuneCP5\_13p6TeV\_madgraphMLM-pythia8/Run3Summer22NanoAODv12-130X\_mcRun3\_2022\_realistic\_v5-v2/NANOAODSIM & 63.9 \\
+\cline{2-3}
+ & /Wto2Q-3Jets\_HT-800\_TuneCP5\_13p6TeV\_madgraphMLM-pythia8/Run3Summer22NanoAODv12-130X\_mcRun3\_2022\_realistic\_v5-v2/NANOAODSIM & 31.9 \\
+\cline{2-3}
+ & /WtoLNu-4Jets\_TuneCP5\_13p6TeV\_madgraphMLM-pythia8/Run3Summer22NanoAODv12-130X\_mcRun3\_2022\_realistic\_v5-v2/NANOAODSIM & 55390.0 \\
+\hline
+\multirow{10}{*}{ZJets} & /Zto2Nu-4Jets\_HT-100to200\_TuneCP5\_13p6TeV\_madgraphMLM-pythia8/Run3Summer22NanoAODv12-130X\_mcRun3\_2022\_realistic\_v5-v2/NANOAODSIM & 273.7 \\
+\cline{2-3}
+ & /Zto2Nu-4Jets\_HT-200to400\_TuneCP5\_13p6TeV\_madgraphMLM-pythia8/Run3Summer22NanoAODv12-130X\_mcRun3\_2022\_realistic\_v5-v2/NANOAODSIM & 75.96 \\
+\cline{2-3}
+ & /Zto2Nu-4Jets\_HT-400to800\_TuneCP5\_13p6TeV\_madgraphMLM-pythia8/Run3Summer22NanoAODv12-130X\_mcRun3\_2022\_realistic\_v5-v2/NANOAODSIM & 13.19 \\
+\cline{2-3}
+ & /Zto2Nu-4Jets\_HT-800to1500\_TuneCP5\_13p6TeV\_madgraphMLM-pythia8/Run3Summer22NanoAODv12-130X\_mcRun3\_2022\_realistic\_v5-v2/NANOAODSIM & 1.364 \\
+\cline{2-3}
+ & /Zto2Nu-4Jets\_HT-1500to2500\_TuneCP5\_13p6TeV\_madgraphMLM-pythia8/Run3Summer22NanoAODv12-130X\_mcRun3\_2022\_realistic\_v5-v2/NANOAODSIM & 0.09865 \\
+\cline{2-3}
+ & /Zto2Nu-4Jets\_HT-2500\_TuneCP5\_13p6TeV\_madgraphMLM-pythia8/Run3Summer22NanoAODv12-130X\_mcRun3\_2022\_realistic\_v5-v2/NANOAODSIM & 0.006699 \\
+\cline{2-3}
+ & /Zto2Q-4Jets\_HT-200to400\_TuneCP5\_13p6TeV\_madgraphMLM-pythia8/Run3Summer22NanoAODv12-130X\_mcRun3\_2022\_realistic\_v5-v2/NANOAODSIM & 1082.0 \\
+\cline{2-3}
+ & /Zto2Q-4Jets\_HT-400to600\_TuneCP5\_13p6TeV\_madgraphMLM-pythia8/Run3Summer22NanoAODv12-130X\_mcRun3\_2022\_realistic\_v5-v2/NANOAODSIM & 124.1 \\
+\cline{2-3}
+ & /Zto2Q-4Jets\_HT-600to800\_TuneCP5\_13p6TeV\_madgraphMLM-pythia8/Run3Summer22NanoAODv12-130X\_mcRun3\_2022\_realistic\_v5-v2/NANOAODSIM & 27.28 \\
+\cline{2-3}
+ & /Zto2Q-4Jets\_HT-800\_TuneCP5\_13p6TeV\_madgraphMLM-pythia8/Run3Summer22NanoAODv12-130X\_mcRun3\_2022\_realistic\_v5-v2/NANOAODSIM & 14.57 \\
+\hline
+\multirow{5}{*}{other} & /WW\_TuneCP5\_13p6TeV\_pythia8/Run3Summer22NanoAODv12-130X\_mcRun3\_2022\_realistic\_v5-v2/NANOAODSIM & 80.23 \\
+\cline{2-3}
+ & /WZ\_TuneCP5\_13p6TeV\_pythia8/Run3Summer22NanoAODv12-130X\_mcRun3\_2022\_realistic\_v5-v2/NANOAODSIM & 29.1 \\
+\cline{2-3}
+ & /ZZ\_TuneCP5\_13p6TeV\_pythia8/Run3Summer22NanoAODv12-130X\_mcRun3\_2022\_realistic\_v5-v2/NANOAODSIM & 12.75 \\
+\cline{2-3}
+ & /DYto2L-4Jets\_MLL-10to50\_TuneCP5\_13p6TeV\_madgraphMLM-pythia8/Run3Summer22NanoAODv12-130X\_mcRun3\_2022\_realistic\_v5-v1/NANOAODSIM & 17380.0 \\
+\cline{2-3}
+ & /DYto2L-4Jets\_MLL-50\_TuneCP5\_13p6TeV\_madgraphMLM-pythia8/Run3Summer22NanoAODv12-130X\_mcRun3\_2022\_realistic\_v5-v2/NANOAODSIM & 5467.0 \\
+\hline
+\end{longtable}
+
+\begin{longtable}{|>{\raggedright\arraybackslash}p{1.4cm}|>{\footnotesize\raggedright\arraybackslash}p{12cm}|>{\raggedright\arraybackslash}p{1.4cm}|}
+\caption{List of MC samples for year 2022EE.}\label{tab:mc2022ee} \\
+\hline
+\textbf{Category} & \textbf{MC Sample} & \textbf{Cross Section (pb)} \\
+\hline
+\endfirsthead
+\multicolumn{2}{c}{\textit{(Continued from previous page)}} \\
+\hline
+\textbf{Category} & \textbf{MC Sample} & \textbf{Cross Section (pb)} \\
+\hline
+\endhead
+\hline
+\multicolumn{2}{r}{\textit{(Continued on next page)}} \\
+\endfoot
+\hline
+\endlastfoot
+\multirow{1}{*}{TTTT} & /TTTT\_TuneCP5\_13p6TeV\_amcatnlo-pythia8/Run3Summer22EENanoAODv12-130X\_mcRun3\_2022\_realistic\_postEE\_v6-v1/NANOAODSIM & 0.01582 \\
+\hline
+\multirow{3}{*}{TT} & /TTto4Q\_TuneCP5\_13p6TeV\_powheg-pythia8/Run3Summer22EENanoAODv12-130X\_mcRun3\_2022\_realistic\_postEE\_v6-v2/NANOAODSIM & 419.69 \\
+\cline{2-3}
+ & /TTtoLNu2Q\_TuneCP5\_13p6TeV\_powheg-pythia8/Run3Summer22EENanoAODv12-130X\_mcRun3\_2022\_realistic\_postEE\_v6-v2/NANOAODSIM & 404.64 \\
+\cline{2-3}
+ & /TTto2L2Nu\_TuneCP5\_13p6TeV\_powheg-pythia8/Run3Summer22EENanoAODv12-130X\_mcRun3\_2022\_realistic\_postEE\_v6-v2/NANOAODSIM & 98.03 \\
+\hline
+\multirow{9}{*}{QCD} & /QCD-4Jets\_HT-1000to1200\_TuneCP5\_13p6TeV\_madgraphMLM-pythia8/Run3Summer22EENanoAODv12-130X\_mcRun3\_2022\_realistic\_postEE\_v6-v2/NANOAODSIM & 883.7 \\
+\cline{2-3}
+ & /QCD-4Jets\_HT-1200to1500\_TuneCP5\_13p6TeV\_madgraphMLM-pythia8/Run3Summer22EENanoAODv12-130X\_mcRun3\_2022\_realistic\_postEE\_v6-v2/NANOAODSIM & 383.5 \\
+\cline{2-3}
+ & /QCD-4Jets\_HT-1500to2000\_TuneCP5\_13p6TeV\_madgraphMLM-pythia8/Run3Summer22EENanoAODv12-130X\_mcRun3\_2022\_realistic\_postEE\_v6-v2/NANOAODSIM & 125.2 \\
+\cline{2-3}
+ & /QCD-4Jets\_HT-2000\_TuneCP5\_13p6TeV\_madgraphMLM-pythia8/Run3Summer22EENanoAODv12-130X\_mcRun3\_2022\_realistic\_postEE\_v6-v2/NANOAODSIM & 26.49 \\
+\cline{2-3}
+ & /QCD-4Jets\_HT-200to400\_TuneCP5\_13p6TeV\_madgraphMLM-pythia8/Run3Summer22EENanoAODv12-130X\_mcRun3\_2022\_realistic\_postEE\_v6-v2/NANOAODSIM & 1961000.0 \\
+\cline{2-3}
+ & /QCD-4Jets\_HT-400to600\_TuneCP5\_13p6TeV\_madgraphMLM-pythia8/Run3Summer22EENanoAODv12-130X\_mcRun3\_2022\_realistic\_postEE\_v6-v2/NANOAODSIM & 95620.0 \\
+\cline{2-3}
+ & /QCD-4Jets\_HT-600to800\_TuneCP5\_13p6TeV\_madgraphMLM-pythia8/Run3Summer22EENanoAODv12-130X\_mcRun3\_2022\_realistic\_postEE\_v6-v2/NANOAODSIM & 13540.0 \\
+\cline{2-3}
+ & /QCD-4Jets\_HT-800to1000\_TuneCP5\_13p6TeV\_madgraphMLM-pythia8/Run3Summer22EENanoAODv12-130X\_mcRun3\_2022\_realistic\_postEE\_v6-v2/NANOAODSIM & 3033.0 \\
+\hline
+\multirow{10}{*}{ttX} & /TTLNu-1Jets\_TuneCP5\_13p6TeV\_amcatnloFXFX-pythia8/Run3Summer22EENanoAODv12-130X\_mcRun3\_2022\_realistic\_postEE\_v6-v4/NANOAODSIM & 0.2505 \\
+\cline{2-3}
+ & /TTLL\_MLL-4to50\_TuneCP5\_13p6TeV\_amcatnlo-pythia8/Run3Summer22EENanoAODv12-130X\_mcRun3\_2022\_realistic\_postEE\_v6-v2/NANOAODSIM & 0.03949 \\
+\cline{2-3}
+ & /TTLL\_MLL-50\_TuneCP5\_13p6TeV\_amcatnlo-pythia8/Run3Summer22EENanoAODv12-130X\_mcRun3\_2022\_realistic\_postEE\_v6-v2/NANOAODSIM & 0.08646 \\
+\cline{2-3}
+ & /TTNuNu\_TuneCP5\_13p6TeV\_amcatnlo-pythia8/Run3Summer22EENanoAODv12-130X\_mcRun3\_2022\_realistic\_postEE\_v6-v2/NANOAODSIM & 0.1638 \\
+\cline{2-3}
+ & /TTZ-ZtoQQ-1Jets\_TuneCP5\_13p6TeV\_amcatnloFXFX-pythia8/Run3Summer22EENanoAODv12-130X\_mcRun3\_2022\_realistic\_postEE\_v6-v2/NANOAODSIM & 0.6603 \\
+\cline{2-3}
+ & /TTH\_Hto2B\_M-125\_TuneCP5\_13p6TeV\_powheg-pythia8/Run3Summer22EENanoAODv12-130X\_mcRun3\_2022\_realistic\_postEE\_v6-v3/NANOAODSIM & 0.3257 \\
+\cline{2-3}
+ & /TTHtoNon2B\_M-125\_TuneCP5\_13p6TeV\_powheg-pythia8/Run3Summer22EENanoAODv12-130X\_mcRun3\_2022\_realistic\_postEE\_v6-v2/NANOAODSIM & 0.2381 \\
+\cline{2-3}
+ & /TTG-1Jets\_PTG-10to100\_TuneCP5\_13p6TeV\_amcatnloFXFXold-pythia8/Run3Summer22EENanoAODv12-130X\_mcRun3\_2022\_realistic\_postEE\_v6-v4/NANOAODSIM & 4.216 \\
+\cline{2-3}
+ & /TTG-1Jets\_PTG-100to200\_TuneCP5\_13p6TeV\_amcatnloFXFXold-pythia8/Run3Summer22EENanoAODv12-130X\_mcRun3\_2022\_realistic\_postEE\_v6-v3/NANOAODSIM & 0.4114 \\
+\cline{2-3}
+ & /TTG-1Jets\_PTG-200\_TuneCP5\_13p6TeV\_amcatnloFXFXold-pythia8/Run3Summer22EENanoAODv12-130X\_mcRun3\_2022\_realistic\_postEE\_v6-v3/NANOAODSIM & 0.1284 \\
+\hline
+\multirow{10}{*}{Single-top} & /TbarBQ\_t-channel\_4FS\_TuneCP5\_13p6TeV\_powheg-madspin-pythia8/Run3Summer22EENanoAODv12-130X\_mcRun3\_2022\_realistic\_postEE\_v6-v2/NANOAODSIM & 75.47 \\
+\cline{2-3}
+ & /TBbarQ\_t-channel\_4FS\_TuneCP5\_13p6TeV\_powheg-madspin-pythia8/Run3Summer22EENanoAODv12-130X\_mcRun3\_2022\_realistic\_postEE\_v6-v2/NANOAODSIM & 123.8 \\
+\cline{2-3}
+ & /TbarWplusto2L2Nu\_TuneCP5\_13p6TeV\_powheg-pythia8/Run3Summer22EENanoAODv12-130X\_mcRun3\_2022\_realistic\_postEE\_v6-v2/NANOAODSIM & 4.663 \\
+\cline{2-3}
+ & /TbarWplusto4Q\_TuneCP5\_13p6TeV\_powheg-pythia8/Run3Summer22EENanoAODv12-130X\_mcRun3\_2022\_realistic\_postEE\_v6-v2/NANOAODSIM & 19.971 \\
+\cline{2-3}
+ & /TbarWplustoLNu2Q\_TuneCP5\_13p6TeV\_powheg-pythia8/Run3Summer22EENanoAODv12-130X\_mcRun3\_2022\_realistic\_postEE\_v6-v2/NANOAODSIM & 19.303 \\
+\cline{2-3}
+ & /TWminusto2L2Nu\_TuneCP5\_13p6TeV\_powheg-pythia8/Run3Summer22EENanoAODv12-130X\_mcRun3\_2022\_realistic\_postEE\_v6-v2/NANOAODSIM & 4.663 \\
+\cline{2-3}
+ & /TWminusto4Q\_TuneCP5\_13p6TeV\_powheg-pythia8/Run3Summer22EENanoAODv12-130X\_mcRun3\_2022\_realistic\_postEE\_v6-v2/NANOAODSIM & 19.971 \\
+\cline{2-3}
+ & /TWminustoLNu2Q\_TuneCP5\_13p6TeV\_powheg-pythia8/Run3Summer22EENanoAODv12-130X\_mcRun3\_2022\_realistic\_postEE\_v6-v2/NANOAODSIM & 19.303 \\
+\cline{2-3}
+ & /TBbartoLplusNuBbar-s-channel-4FS\_TuneCP5\_13p6TeV\_amcatnlo-pythia8/Run3Summer22EENanoAODv12-130X\_mcRun3\_2022\_realistic\_postEE\_v6-v2/NANOAODSIM & 2.278 \\
+\cline{2-3}
+ & /TbarBtoLminusNuB-s-channel-4FS\_TuneCP5\_13p6TeV\_amcatnlo-pythia8/Run3Summer22EENanoAODv12-130X\_mcRun3\_2022\_realistic\_postEE\_v6-v2/NANOAODSIM & 1.43 \\
+\hline
+\multirow{5}{*}{WJets} & /Wto2Q-3Jets\_HT-200to400\_TuneCP5\_13p6TeV\_madgraphMLM-pythia8/Run3Summer22EENanoAODv12-130X\_mcRun3\_2022\_realistic\_postEE\_v6-v2/NANOAODSIM & 2723.0 \\
+\cline{2-3}
+ & /Wto2Q-3Jets\_HT-400to600\_TuneCP5\_13p6TeV\_madgraphMLM-pythia8/Run3Summer22EENanoAODv12-130X\_mcRun3\_2022\_realistic\_postEE\_v6-v2/NANOAODSIM & 299.8 \\
+\cline{2-3}
+ & /Wto2Q-3Jets\_HT-600to800\_TuneCP5\_13p6TeV\_madgraphMLM-pythia8/Run3Summer22EENanoAODv12-130X\_mcRun3\_2022\_realistic\_postEE\_v6-v2/NANOAODSIM & 63.9 \\
+\cline{2-3}
+ & /Wto2Q-3Jets\_HT-800\_TuneCP5\_13p6TeV\_madgraphMLM-pythia8/Run3Summer22EENanoAODv12-130X\_mcRun3\_2022\_realistic\_postEE\_v6-v2/NANOAODSIM & 31.9 \\
+\cline{2-3}
+ & /WtoLNu-4Jets\_TuneCP5\_13p6TeV\_madgraphMLM-pythia8/Run3Summer22EENanoAODv12-130X\_mcRun3\_2022\_realistic\_postEE\_v6-v2/NANOAODSIM & 55390.0 \\
+\hline
+\multirow{10}{*}{ZJets} & /Zto2Nu-4Jets\_HT-100to200\_TuneCP5\_13p6TeV\_madgraphMLM-pythia8/Run3Summer22EENanoAODv12-130X\_mcRun3\_2022\_realistic\_postEE\_v6-v2/NANOAODSIM & 273.7 \\
+\cline{2-3}
+ & /Zto2Nu-4Jets\_HT-200to400\_TuneCP5\_13p6TeV\_madgraphMLM-pythia8/Run3Summer22EENanoAODv12-130X\_mcRun3\_2022\_realistic\_postEE\_v6-v2/NANOAODSIM & 75.96 \\
+\cline{2-3}
+ & /Zto2Nu-4Jets\_HT-400to800\_TuneCP5\_13p6TeV\_madgraphMLM-pythia8/Run3Summer22EENanoAODv12-130X\_mcRun3\_2022\_realistic\_postEE\_v6-v2/NANOAODSIM & 13.19 \\
+\cline{2-3}
+ & /Zto2Nu-4Jets\_HT-800to1500\_TuneCP5\_13p6TeV\_madgraphMLM-pythia8/Run3Summer22EENanoAODv12-130X\_mcRun3\_2022\_realistic\_postEE\_v6-v1/NANOAODSIM & 1.364 \\
+\cline{2-3}
+ & /Zto2Nu-4Jets\_HT-1500to2500\_TuneCP5\_13p6TeV\_madgraphMLM-pythia8/Run3Summer22EENanoAODv12-130X\_mcRun3\_2022\_realistic\_postEE\_v6-v2/NANOAODSIM & 0.09865 \\
+\cline{2-3}
+ & /Zto2Nu-4Jets\_HT-2500\_TuneCP5\_13p6TeV\_madgraphMLM-pythia8/Run3Summer22EENanoAODv12-130X\_mcRun3\_2022\_realistic\_postEE\_v6-v2/NANOAODSIM & 0.006699 \\
+\cline{2-3}
+ & /Zto2Q-4Jets\_HT-200to400\_TuneCP5\_13p6TeV\_madgraphMLM-pythia8/Run3Summer22EENanoAODv12-130X\_mcRun3\_2022\_realistic\_postEE\_v6-v2/NANOAODSIM & 1082.0 \\
+\cline{2-3}
+ & /Zto2Q-4Jets\_HT-400to600\_TuneCP5\_13p6TeV\_madgraphMLM-pythia8/Run3Summer22EENanoAODv12-130X\_mcRun3\_2022\_realistic\_postEE\_v6-v2/NANOAODSIM & 124.1 \\
+\cline{2-3}
+ & /Zto2Q-4Jets\_HT-600to800\_TuneCP5\_13p6TeV\_madgraphMLM-pythia8/Run3Summer22EENanoAODv12-130X\_mcRun3\_2022\_realistic\_postEE\_v6-v2/NANOAODSIM & 27.28 \\
+\cline{2-3}
+ & /Zto2Q-4Jets\_HT-800\_TuneCP5\_13p6TeV\_madgraphMLM-pythia8/Run3Summer22EENanoAODv12-130X\_mcRun3\_2022\_realistic\_postEE\_v6-v2/NANOAODSIM & 14.57 \\
+\hline
+\multirow{5}{*}{other} & /WW\_TuneCP5\_13p6TeV\_pythia8/Run3Summer22EENanoAODv12-130X\_mcRun3\_2022\_realistic\_postEE\_v6-v2/NANOAODSIM & 80.23 \\
+\cline{2-3}
+ & /WZ\_TuneCP5\_13p6TeV\_pythia8/Run3Summer22EENanoAODv12-130X\_mcRun3\_2022\_realistic\_postEE\_v6-v2/NANOAODSIM & 29.1 \\
+\cline{2-3}
+ & /ZZ\_TuneCP5\_13p6TeV\_pythia8/Run3Summer22EENanoAODv12-130X\_mcRun3\_2022\_realistic\_postEE\_v6-v2/NANOAODSIM & 12.75 \\
+\cline{2-3}
+ & /DYto2L-4Jets\_MLL-50\_TuneCP5\_13p6TeV\_madgraphMLM-pythia8/Run3Summer22EENanoAODv12-130X\_mcRun3\_2022\_realistic\_postEE\_v6-v2/NANOAODSIM & 5467.0 \\
+\cline{2-3}
+ & /DYto2L-4Jets\_MLL-10to50\_TuneCP5\_13p6TeV\_madgraphMLM-pythia8/Run3Summer22EENanoAODv12-130X\_mcRun3\_2022\_realistic\_postEE\_v6-v3/NANOAODSIM & 17380.0 \\
+\hline
+\end{longtable}
+
+\begin{longtable}{|>{\raggedright\arraybackslash}p{1.4cm}|>{\footnotesize\raggedright\arraybackslash}p{12cm}|>{\raggedright\arraybackslash}p{1.4cm}|}
+\caption{List of MC samples for year 2023.}\label{tab:mc2023} \\
+\hline
+\textbf{Category} & \textbf{MC Sample} & \textbf{Cross Section (pb)} \\
+\hline
+\endfirsthead
+\multicolumn{2}{c}{\textit{(Continued from previous page)}} \\
+\hline
+\textbf{Category} & \textbf{MC Sample} & \textbf{Cross Section (pb)} \\
+\hline
+\endhead
+\hline
+\multicolumn{2}{r}{\textit{(Continued on next page)}} \\
+\endfoot
+\hline
+\endlastfoot
+\multirow{1}{*}{TTTT} & /TTTT\_TuneCP5\_13p6TeV\_amcatnlo-pythia8/Run3Summer23NanoAODv12-130X\_mcRun3\_2023\_realistic\_v15-v2/NANOAODSIM & 0.01582 \\
+\hline
+\multirow{3}{*}{TT} & /TTto4Q\_TuneCP5\_13p6TeV\_powheg-pythia8/Run3Summer23NanoAODv12-130X\_mcRun3\_2023\_realistic\_v14-v2/NANOAODSIM & 419.69 \\
+\cline{2-3}
+ & /TTtoLNu2Q\_TuneCP5\_13p6TeV\_powheg-pythia8/Run3Summer23NanoAODv12-130X\_mcRun3\_2023\_realistic\_v14-v2/NANOAODSIM & 404.64 \\
+\cline{2-3}
+ & /TTto2L2Nu\_TuneCP5\_13p6TeV\_powheg-pythia8/Run3Summer23NanoAODv12-130X\_mcRun3\_2023\_realistic\_v14-v2/NANOAODSIM & 98.03 \\
+\hline
+\multirow{8}{*}{QCD} & /QCD-4Jets\_HT-1000to1200\_TuneCP5\_13p6TeV\_madgraphMLM-pythia8/Run3Summer23NanoAODv12-130X\_mcRun3\_2023\_realistic\_v14-v2/NANOAODSIM & 883.7 \\
+\cline{2-3}
+ & /QCD-4Jets\_HT-1200to1500\_TuneCP5\_13p6TeV\_madgraphMLM-pythia8/Run3Summer23NanoAODv12-130X\_mcRun3\_2023\_realistic\_v14-v2/NANOAODSIM & 383.5 \\
+\cline{2-3}
+ & /QCD-4Jets\_HT-1500to2000\_TuneCP5\_13p6TeV\_madgraphMLM-pythia8/Run3Summer23NanoAODv12-130X\_mcRun3\_2023\_realistic\_v14-v3/NANOAODSIM & 125.2 \\
+\cline{2-3}
+ & /QCD-4Jets\_HT-2000\_TuneCP5\_13p6TeV\_madgraphMLM-pythia8/Run3Summer23NanoAODv12-130X\_mcRun3\_2023\_realistic\_v14-v2/NANOAODSIM & 26.49 \\
+\cline{2-3}
+ & /QCD-4Jets\_HT-400to600\_TuneCP5\_13p6TeV\_madgraphMLM-pythia8/Run3Summer23NanoAODv12-130X\_mcRun3\_2023\_realistic\_v14-v3/NANOAODSIM & 95620 \\
+\cline{2-3}
+ & /QCD-4Jets\_HT-600to800\_TuneCP5\_13p6TeV\_madgraphMLM-pythia8/Run3Summer23NanoAODv12-130X\_mcRun3\_2023\_realistic\_v14-v2/NANOAODSIM & 13540 \\
+\cline{2-3}
+ & /QCD-4Jets\_HT-800to1000\_TuneCP5\_13p6TeV\_madgraphMLM-pythia8/Run3Summer23NanoAODv12-130X\_mcRun3\_2023\_realistic\_v14-v2/NANOAODSIM & 3033 \\
+\hline\hline
+\multirow{10}{*}{ttX} & /TTLL\_MLL-4to50\_TuneCP5\_13p6TeV\_amcatnlo-pythia8/Run3Summer23NanoAODv12-130X\_mcRun3\_2023\_realistic\_v15-v2/NANOAODSIM & 0.03949 \\
+\cline{2-3}
+ & /TTLL\_MLL-50\_TuneCP5\_13p6TeV\_amcatnlo-pythia8/Run3Summer23NanoAODv12-130X\_mcRun3\_2023\_realistic\_v15-v2/NANOAODSIM & 0.08646 \\
+\cline{2-3}
+ & /TTZ-ZtoQQ-1Jets\_TuneCP5\_13p6TeV\_amcatnloFXFX-pythia8/Run3Summer23NanoAODv12-130X\_mcRun3\_2023\_realistic\_v15-v3/NANOAODSIM & 0.6603 \\
+\cline{2-3}
+ & /TTNuNu\_TuneCP5\_13p6TeV\_amcatnlo-pythia8/Run3Summer23NanoAODv12-130X\_mcRun3\_2023\_realistic\_v15-v3/NANOAODSIM & 0.1638 \\
+\cline{2-3}
+ & /TTLNu-1Jets\_TuneCP5\_13p6TeV\_amcatnloFXFX-pythia8/Run3Summer23NanoAODv12-130X\_mcRun3\_2023\_realistic\_v15-v2/NANOAODSIM & 0.2505 \\
+\cline{2-3}
+ & /TTHto2B\_M-125\_TuneCP5\_13p6TeV\_powheg-pythia8/Run3Summer23NanoAODv12-130X\_mcRun3\_2023\_realistic\_v14-v3/NANOAODSIM & 0.3257\\
+\cline{2-3}
+ & /TTHtoNon2B\_M-125\_TuneCP5\_13p6TeV\_powheg-pythia8/Run3Summer23NanoAODv12-130X\_mcRun3\_2023\_realistic\_v14-v2/NANOAODSIM & 0.2381 \\
+\cline{2-3}
+ & /TTG-1Jets\_PTG-10to100\_TuneCP5\_13p6TeV\_amcatnloFXFXold-pythia8/Run3Summer23NanoAODv12-130X\_mcRun3\_2023\_realistic\_v15-v2/NANOAODSIM & 4.216 \\
+\cline{2-3}
+ & /TTG-1Jets\_PTG-100to200\_TuneCP5\_13p6TeV\_amcatnloFXFXold-pythia8/Run3Summer23NanoAODv12-130X\_mcRun3\_2023\_realistic\_v15-v2/NANOAODSIM & 0.4114 \\
+\cline{2-3}
+ & /TTG-1Jets\_PTG-200\_TuneCP5\_13p6TeV\_amcatnloFXFXold-pythia8/Run3Summer23NanoAODv12-130X\_mcRun3\_2023\_realistic\_v15-v2/NANOAODSIM & 0.1284 \\
+\hline
+\multirow{10}{*}{Single-top} & /TbarBQ\_t-channel\_4FS\_TuneCP5\_13p6TeV\_powheg-madspin-pythia8/Run3Summer23NanoAODv12-130X\_mcRun3\_2023\_realistic\_v15-v2/NANOAODSIM & 75.47 \\
+\cline{2-3}
+ & /TBbarQ\_t-channel\_4FS\_TuneCP5\_13p6TeV\_powheg-madspin-pythia8/Run3Summer23NanoAODv12-130X\_mcRun3\_2023\_realistic\_v15-v2/NANOAODSIM & 123.8 \\
+\cline{2-3}
+ & /TbarWplusto2L2Nu\_TuneCP5\_13p6TeV\_powheg-pythia8/Run3Summer23NanoAODv12-130X\_mcRun3\_2023\_realistic\_v15-v4/NANOAODSIM & 4.663 \\
+\cline{2-3}
+ & /TbarWplusto4Q\_TuneCP5\_13p6TeV\_powheg-pythia8/Run3Summer23NanoAODv12-130X\_mcRun3\_2023\_realistic\_v15-v4/NANOAODSIM & 19.971 \\
+\cline{2-3}
+ & /TbarWplustoLNu2Q\_TuneCP5\_13p6TeV\_powheg-pythia8/Run3Summer23NanoAODv12-130X\_mcRun3\_2023\_realistic\_v15-v6/NANOAODSIM & 19.303 \\
+\cline{2-3}
+ & /TWminusto2L2Nu\_TuneCP5\_13p6TeV\_powheg-pythia8/Run3Summer23NanoAODv12-130X\_mcRun3\_2023\_realistic\_v14-v2/NANOAODSIM & 4.663 \\
+\cline{2-3}
+ & /TWminusto4Q\_TuneCP5\_13p6TeV\_powheg-pythia8/Run3Summer23NanoAODv12-130X\_mcRun3\_2023\_realistic\_v14-v2/NANOAODSIM & 19.971 \\
+\cline{2-3}
+ & /TWminustoLNu2Q\_TuneCP5\_13p6TeV\_powheg-pythia8/Run3Summer23NanoAODv12-130X\_mcRun3\_2023\_realistic\_v14-v2/NANOAODSIM & 19.303 \\
+\cline{2-3}
+ & /TBbartoLplusNuBbar-s-channel-4FS\_TuneCP5\_13p6TeV\_amcatnlo-pythia8/Run3Summer23NanoAODv12-130X\_mcRun3\_2023\_realistic\_v15-v2/NANOAODSIM & 2.278 \\
+\cline{2-3}
+ & /TbarBtoLminusNuB-s-channel-4FS\_TuneCP5\_13p6TeV\_amcatnlo-pythia8/Run3Summer23NanoAODv12-130X\_mcRun3\_2023\_realistic\_v15-v2/NANOAODSIM & 1.43 \\
+\hline
+\multirow{5}{*}{WJets} & /Wto2Q-3Jets\_HT-200to400\_TuneCP5\_13p6TeV\_madgraphMLM-pythia8/Run3Summer23NanoAODv12-130X\_mcRun3\_2023\_realistic\_v14-v2/NANOAODSIM & 2723.0 \\
+\cline{2-3}
+ & /Wto2Q-3Jets\_HT-400to600\_TuneCP5\_13p6TeV\_madgraphMLM-pythia8/Run3Summer23NanoAODv12-130X\_mcRun3\_2023\_realistic\_v14-v2/NANOAODSIM & 299.8 \\
+\cline{2-3}
+ & /Wto2Q-3Jets\_HT-600to800\_TuneCP5\_13p6TeV\_madgraphMLM-pythia8/Run3Summer23NanoAODv12-130X\_mcRun3\_2023\_realistic\_v14-v2/NANOAODSIM & 63.9 \\
+\cline{2-3}
+ & /Wto2Q-3Jets\_HT-800\_TuneCP5\_13p6TeV\_madgraphMLM-pythia8/Run3Summer23NanoAODv12-130X\_mcRun3\_2023\_realistic\_v14-v2/NANOAODSIM & 31.9 \\
+\cline{2-3}
+ & /WtoLNu-4Jets\_TuneCP5\_13p6TeV\_madgraphMLM-pythia8/Run3Summer23NanoAODv12-130X\_mcRun3\_2023\_realistic\_v14-v3/NANOAODSIM & 55390 \\
+\hline
+\multirow{10}{*}{ZJets} & /Zto2Nu-4Jets\_HT-100to200\_TuneCP5\_13p6TeV\_madgraphMLM-pythia8/Run3Summer23NanoAODv12-130X\_mcRun3\_2023\_realistic\_v14-v2/NANOAODSIM & 273.7 \\
+\cline{2-3}
+ & /Zto2Nu-4Jets\_HT-200to400\_TuneCP5\_13p6TeV\_madgraphMLM-pythia8/Run3Summer23NanoAODv12-130X\_mcRun3\_2023\_realistic\_v14-v2/NANOAODSIM & 75.96 \\
+\cline{2-3}
+ & /Zto2Nu-4Jets\_HT-400to800\_TuneCP5\_13p6TeV\_madgraphMLM-pythia8/Run3Summer23NanoAODv12-130X\_mcRun3\_2023\_realistic\_v14-v2/NANOAODSIM & 13.19 \\
+\cline{2-3}
+ & /Zto2Nu-4Jets\_HT-800to1500\_TuneCP5\_13p6TeV\_madgraphMLM-pythia8/Run3Summer23NanoAODv12-130X\_mcRun3\_2023\_realistic\_v14-v2/NANOAODSIM & 1.364 \\
+\cline{2-3}
+ & /Zto2Nu-4Jets\_HT-1500to2500\_TuneCP5\_13p6TeV\_madgraphMLM-pythia8/Run3Summer23NanoAODv12-130X\_mcRun3\_2023\_realistic\_v14-v2/NANOAODSIM & 0.09865 \\
+\cline{2-3}
+ & /Zto2Nu-4Jets\_HT-2500\_TuneCP5\_13p6TeV\_madgraphMLM-pythia8/Run3Summer23NanoAODv12-130X\_mcRun3\_2023\_realistic\_v14-v3/NANOAODSIM & 0.006699 \\
+\cline{2-3}
+ & /Zto2Q-4Jets\_HT-200to400\_TuneCP5\_13p6TeV\_madgraphMLM-pythia8/Run3Summer23NanoAODv12-130X\_mcRun3\_2023\_realistic\_v14-v1/NANOAODSIM & 1082.0 \\
+\cline{2-3}
+ & /Zto2Q-4Jets\_HT-400to600\_TuneCP5\_13p6TeV\_madgraphMLM-pythia8/Run3Summer23NanoAODv12-130X\_mcRun3\_2023\_realistic\_v14-v1/NANOAODSIM & 124.1 \\
+\cline{2-3}
+ & /Zto2Q-4Jets\_HT-600to800\_TuneCP5\_13p6TeV\_madgraphMLM-pythia8/Run3Summer23NanoAODv12-130X\_mcRun3\_2023\_realistic\_v14-v1/NANOAODSIM & 27.28 \\
+\cline{2-3}
+ & /Zto2Q-4Jets\_HT-800\_TuneCP5\_13p6TeV\_madgraphMLM-pythia8/Run3Summer23NanoAODv12-130X\_mcRun3\_2023\_realistic\_v14-v1/NANOAODSIM & 14.57 \\
+
+\multirow{5}{*}{other} & /WW\_TuneCP5\_13p6TeV\_pythia8/Run3Summer23NanoAODv12-130X\_mcRun3\_2023\_realistic\_v14-v2/NANOAODSIM & 80.23 \\
+\cline{2-3}
+ & /WZ\_TuneCP5\_13p6TeV\_pythia8/Run3Summer23NanoAODv12-130X\_mcRun3\_2023\_realistic\_v14-v2/NANOAODSIM & 29.1 \\
+\cline{2-3}
+ & /ZZ\_TuneCP5\_13p6TeV\_pythia8/Run3Summer23NanoAODv12-130X\_mcRun3\_2023\_realistic\_v14-v2/NANOAODSIM & 12.75 \\
+\cline{2-3}
+ & /DYto2L-4Jets\_MLL-10to50\_TuneCP5\_13p6TeV\_madgraphMLM-pythia8/Run3Summer23NanoAODv12-130X\_mcRun3\_2023\_realistic\_v14-v3/NANOAODSIM & 17380 \\
+\cline{2-3}
+ & /DYto2L-4Jets\_MLL-50\_TuneCP5\_13p6TeV\_madgraphMLM-pythia8/Run3Summer23NanoAODv12-130X\_mcRun3\_2023\_realistic\_v14-v1/NANOAODSIM & 5467 \\
+
+\end{longtable}
+
+\begin{longtable}{|>{\raggedright\arraybackslash}p{1.4cm}|>{\footnotesize\raggedright\arraybackslash}p{12cm}|>{\raggedright\arraybackslash}p{1.4cm}|}
+\caption{List of MC samples for year 2023BPix.}\label{tab:mc2023bpix} \\
+\hline
+\textbf{Category} & \textbf{MC Sample} & \textbf{Cross Section (pb)} \\
+\hline
+\endfirsthead
+\multicolumn{2}{c}{\textit{(Continued from previous page)}} \\
+\hline
+\textbf{Category} & \textbf{MC Sample} & \textbf{Cross Section (pb)} \\
+\hline
+\endhead
+\hline
+\multicolumn{2}{r}{\textit{(Continued on next page)}} \\
+\endfoot
+\hline
+\endlastfoot
+\multirow{1}{*}{TTTT} & /TTTT\_TuneCP5\_13p6TeV\_amcatnlo-pythia8/Run3Summer23BPixNanoAODv12-130X\_mcRun3\_2023\_realistic\_postBPix\_v6-v2/NANOAODSIM & 0.01582 \\
+\hline
+\multirow{3}{*}{TT} & /TTto4Q\_TuneCP5\_13p6TeV\_powheg-pythia8/Run3Summer23BPixNanoAODv12-130X\_mcRun3\_2023\_realistic\_postBPix\_v2-v3/NANOAODSIM & 419.69 \\
+\cline{2-3}
+ & /TTto2L2Nu\_TuneCP5\_13p6TeV\_powheg-pythia8/Run3Summer23BPixNanoAODv12-130X\_mcRun3\_2023\_realistic\_postBPix\_v2-v3/NANOAODSIM & 98.03 \\
+\cline{2-3}
+ & /TTtoLNu2Q\_TuneCP5\_13p6TeV\_powheg-pythia8/Run3Summer23BPixNanoAODv12-130X\_mcRun3\_2023\_realistic\_postBPix\_v2-v3/NANOAODSIM & 404.64 \\
+\hline
+\multirow{8}{*}{QCD} & /QCD-4Jets\_HT-1000to1200\_TuneCP5\_13p6TeV\_madgraphMLM-pythia8/Run3Summer23BPixNanoAODv12-130X\_mcRun3\_2023\_realistic\_postBPix\_v2-v4/NANOAODSIM & 883.7 \\
+\cline{2-3}
+ & /QCD-4Jets\_HT-1200to1500\_TuneCP5\_13p6TeV\_madgraphMLM-pythia8/Run3Summer23BPixNanoAODv12-130X\_mcRun3\_2023\_realistic\_postBPix\_v2-v4/NANOAODSIM & 383.5 \\
+\cline{2-3}
+ & /QCD-4Jets\_HT-1500to2000\_TuneCP5\_13p6TeV\_madgraphMLM-pythia8/Run3Summer23BPixNanoAODv12-130X\_mcRun3\_2023\_realistic\_postBPix\_v2-v3/NANOAODSIM & 125.2 \\
+\cline{2-3}
+ & /QCD-4Jets\_HT-2000\_TuneCP5\_13p6TeV\_madgraphMLM-pythia8/Run3Summer23BPixNanoAODv12-130X\_mcRun3\_2023\_realistic\_postBPix\_v2-v4/NANOAODSIM & 26.49 \\
+\cline{2-3}
+ & /QCD-4Jets\_HT-400to600\_TuneCP5\_13p6TeV\_madgraphMLM-pythia8/Run3Summer23BPixNanoAODv12-130X\_mcRun3\_2023\_realistic\_postBPix\_v2-v4/NANOAODSIM & 95620 \\
+\cline{2-3}
+ & /QCD-4Jets\_HT-600to800\_TuneCP5\_13p6TeV\_madgraphMLM-pythia8/Run3Summer23BPixNanoAODv12-130X\_mcRun3\_2023\_realistic\_postBPix\_v2-v3/NANOAODSIM & 13540 \\
+\cline{2-3}
+ & /QCD-4Jets\_HT-800to1000\_TuneCP5\_13p6TeV\_madgraphMLM-pythia8/Run3Summer23BPixNanoAODv12-130X\_mcRun3\_2023\_realistic\_postBPix\_v2-v4/NANOAODSIM & 3033 \\
+\cline{2-3}
+ & & \\
+\hline
+\multirow{10}{*}{ttX} & /TTLL\_MLL-4to50\_TuneCP5\_13p6TeV\_amcatnlo-pythia8/Run3Summer23BPixNanoAODv12-130X\_mcRun3\_2023\_realistic\_postBPix\_v6-v2/NANOAODSIM & 0.03949 \\
+\cline{2-3}
+ & /TTLL\_MLL-50\_TuneCP5\_13p6TeV\_amcatnlo-pythia8/Run3Summer23BPixNanoAODv12-130X\_mcRun3\_2023\_realistic\_postBPix\_v6-v2/NANOAODSIM & 0.08646 \\
+\cline{2-3}
+ & /TTZ-ZtoQQ-1Jets\_TuneCP5\_13p6TeV\_amcatnloFXFX-pythia8/Run3Summer23BPixNanoAODv12-130X\_mcRun3\_2023\_realistic\_postBPix\_v6-v2/NANOAODSIM & 0.6603 \\
+\cline{2-3}
+ & /TTLNu-1Jets\_TuneCP5\_13p6TeV\_amcatnloFXFX-pythia8/Run3Summer23BPixNanoAODv12-130X\_mcRun3\_2023\_realistic\_postBPix\_v6-v2/NANOAODSIM & 0.2505 \\
+\cline{2-3}
+ & /TTNuNu\_TuneCP5\_13p6TeV\_amcatnlo-pythia8/Run3Summer23BPixNanoAODv12-130X\_mcRun3\_2023\_realistic\_postBPix\_v6-v2/NANOAODSIM & 0.1638 \\
+\cline{2-3}
+ & /TTHto2B\_M-125\_TuneCP5\_13p6TeV\_powheg-pythia8/Run3Summer23BPixNanoAODv12-130X\_mcRun3\_2023\_realistic\_postBPix\_v2-v3/NANOAODSIM & 0.3257 \\
+\cline{2-3}
+ & /TTHtoNon2B\_M-125\_TuneCP5\_13p6TeV\_powheg-pythia8/Run3Summer23BPixNanoAODv12-130X\_mcRun3\_2023\_realistic\_postBPix\_v2-v2/NANOAODSIM & 0.2381 \\
+\cline{2-3}
+ & /TTG-1Jets\_PTG-10to100\_TuneCP5\_13p6TeV\_amcatnloFXFXold-pythia8/Run3Summer23BPixNanoAODv12-130X\_mcRun3\_2023\_realistic\_postBPix\_v6-v2/NANOAODSIM & 4.216 \\
+\cline{2-3}
+ & /TTG-1Jets\_PTG-100to200\_TuneCP5\_13p6TeV\_amcatnloFXFXold-pythia8/Run3Summer23BPixNanoAODv12-130X\_mcRun3\_2023\_realistic\_postBPix\_v6-v2/NANOAODSIM & 0.4114 \\
+\cline{2-3}
+ & /TTG-1Jets\_PTG-200\_TuneCP5\_13p6TeV\_amcatnloFXFXold-pythia8/Run3Summer23BPixNanoAODv12-130X\_mcRun3\_2023\_realistic\_postBPix\_v6-v2/NANOAODSIM & 0.1284 \\
+\hline
+\multirow{10}{*}{Single-top} & /TbarBQ\_t-channel\_4FS\_TuneCP5\_13p6TeV\_powheg-madspin-pythia8/Run3Summer23BPixNanoAODv12-130X\_mcRun3\_2023\_realistic\_postBPix\_v6-v2/NANOAODSIM & 75.47 \\
+\cline{2-3}
+ & /TBbarQ\_t-channel\_4FS\_TuneCP5\_13p6TeV\_powheg-madspin-pythia8/Run3Summer23BPixNanoAODv12-130X\_mcRun3\_2023\_realistic\_postBPix\_v6-v2/NANOAODSIM & 123.8 \\
+\cline{2-3}
+ & /TbarWplusto2L2Nu\_TuneCP5\_13p6TeV\_powheg-pythia8/Run3Summer23BPixNanoAODv12-130X\_mcRun3\_2023\_realistic\_postBPix\_v6-v2/NANOAODSIM & 4.663 \\
+\cline{2-3}
+ & /TbarWplusto4Q\_TuneCP5\_13p6TeV\_powheg-pythia8/Run3Summer23BPixNanoAODv12-130X\_mcRun3\_2023\_realistic\_postBPix\_v6-v2/NANOAODSIM & 19.971 \\
+\cline{2-3}
+ & /TbarWplustoLNu2Q\_TuneCP5\_13p6TeV\_powheg-pythia8/Run3Summer23BPixNanoAODv12-130X\_mcRun3\_2023\_realistic\_postBPix\_v6-v2/NANOAODSIM & 19.303 \\
+\cline{2-3}
+ & /TWminusto2L2Nu\_TuneCP5\_13p6TeV\_powheg-pythia8/Run3Summer23BPixNanoAODv12-130X\_mcRun3\_2023\_realistic\_postBPix\_v2-v3/NANOAODSIM & 4.663 \\
+\cline{2-3}
+ & /TWminusto4Q\_TuneCP5\_13p6TeV\_powheg-pythia8/Run3Summer23BPixNanoAODv12-130X\_mcRun3\_2023\_realistic\_postBPix\_v2-v3/NANOAODSIM & 19.971 \\
+\cline{2-3}
+ & /TWminustoLNu2Q\_TuneCP5\_13p6TeV\_powheg-pythia8/Run3Summer23BPixNanoAODv12-130X\_mcRun3\_2023\_realistic\_postBPix\_v2-v3/NANOAODSIM & 19.303 \\
+\cline{2-3}
+ & /TBbartoLplusNuBbar-s-channel-4FS\_TuneCP5\_13p6TeV\_amcatnlo-pythia8/Run3Summer23BPixNanoAODv12-130X\_mcRun3\_2023\_realistic\_postBPix\_v6-v2/NANOAODSIM & 2.278 \\
+\cline{2-3}
+ & /TbarBtoLminusNuB-s-channel-4FS\_TuneCP5\_13p6TeV\_amcatnlo-pythia8/Run3Summer23BPixNanoAODv12-130X\_mcRun3\_2023\_realistic\_postBPix\_v6-v2/NANOAODSIM & 1.43 \\
+\hline
+\multirow{5}{*}{WJets} & /Wto2Q-3Jets\_HT-200to400\_TuneCP5\_13p6TeV\_madgraphMLM-pythia8/Run3Summer23BPixNanoAODv12-130X\_mcRun3\_2023\_realistic\_postBPix\_v2-v2/NANOAODSIM & 2723.0 \\
+\cline{2-3}
+ & /Wto2Q-3Jets\_HT-400to600\_TuneCP5\_13p6TeV\_madgraphMLM-pythia8/Run3Summer23BPixNanoAODv12-130X\_mcRun3\_2023\_realistic\_postBPix\_v2-v2/NANOAODSIM & 299.8 \\
+\cline{2-3}
+ & /Wto2Q-3Jets\_HT-600to800\_TuneCP5\_13p6TeV\_madgraphMLM-pythia8/Run3Summer23BPixNanoAODv12-130X\_mcRun3\_2023\_realistic\_postBPix\_v2-v2/NANOAODSIM & 63.9 \\
+\cline{2-3}
+ & /Wto2Q-3Jets\_HT-800\_TuneCP5\_13p6TeV\_madgraphMLM-pythia8/Run3Summer23BPixNanoAODv12-130X\_mcRun3\_2023\_realistic\_postBPix\_v2-v2/NANOAODSIM & 31.9 \\
+\cline{2-3}
+ & /WtoLNu-4Jets\_TuneCP5\_13p6TeV\_madgraphMLM-pythia8/Run3Summer23BPixNanoAODv12-130X\_mcRun3\_2023\_realistic\_postBPix\_v2-v3/NANOAODSIM & 55390 \\
+\hline
+\multirow{10}{*}{ZJets} & /Zto2Nu-4Jets\_HT-100to200\_TuneCP5\_13p6TeV\_madgraphMLM-pythia8/Run3Summer23BPixNanoAODv12-130X\_mcRun3\_2023\_realistic\_postBPix\_v2-v2/NANOAODSIM & 273.7 \\
+\cline{2-3}
+ & /Zto2Nu-4Jets\_HT-200to400\_TuneCP5\_13p6TeV\_madgraphMLM-pythia8/Run3Summer23BPixNanoAODv12-130X\_mcRun3\_2023\_realistic\_postBPix\_v2-v2/NANOAODSIM & 75.96 \\
+\cline{2-3}
+ & /Zto2Nu-4Jets\_HT-400to800\_TuneCP5\_13p6TeV\_madgraphMLM-pythia8/Run3Summer23BPixNanoAODv12-130X\_mcRun3\_2023\_realistic\_postBPix\_v2-v2/NANOAODSIM & 13.19 \\
+\cline{2-3}
+ & /Zto2Nu-4Jets\_HT-800to1500\_TuneCP5\_13p6TeV\_madgraphMLM-pythia8/Run3Summer23BPixNanoAODv12-130X\_mcRun3\_2023\_realistic\_postBPix\_v2-v2/NANOAODSIM & 1.364 \\
+\cline{2-3}
+ & /Zto2Nu-4Jets\_HT-1500to2500\_TuneCP5\_13p6TeV\_madgraphMLM-pythia8/Run3Summer23BPixNanoAODv12-130X\_mcRun3\_2023\_realistic\_postBPix\_v2-v2/NANOAODSIM & 0.09865 \\
+\cline{2-3}
+ & /Zto2Nu-4Jets\_HT-2500\_TuneCP5\_13p6TeV\_madgraphMLM-pythia8/Run3Summer23BPixNanoAODv12-130X\_mcRun3\_2023\_realistic\_postBPix\_v2-v3/NANOAODSIM & 0.006699 \\
+\cline{2-3}
+ & /Zto2Q-4Jets\_HT-200to400\_TuneCP5\_13p6TeV\_madgraphMLM-pythia8/Run3Summer23BPixNanoAODv12-130X\_mcRun3\_2023\_realistic\_postBPix\_v2-v1/NANOAODSIM & 1082.0 \\
+\cline{2-3}
+ & /Zto2Q-4Jets\_HT-400to600\_TuneCP5\_13p6TeV\_madgraphMLM-pythia8/Run3Summer23BPixNanoAODv12-130X\_mcRun3\_2023\_realistic\_postBPix\_v2-v2/NANOAODSIM & 124.1 \\
+\cline{2-3}
+ & /Zto2Q-4Jets\_HT-600to800\_TuneCP5\_13p6TeV\_madgraphMLM-pythia8/Run3Summer23BPixNanoAODv12-130X\_mcRun3\_2023\_realistic\_postBPix\_v2-v1/NANOAODSIM & 27.28 \\
+\cline{2-3}
+ & /Zto2Q-4Jets\_HT-800\_TuneCP5\_13p6TeV\_madgraphMLM-pythia8/Run3Summer23BPixNanoAODv12-130X\_mcRun3\_2023\_realistic\_postBPix\_v2-v1/NANOAODSIM & 14.57 \\
+\hline
+\multirow{5}{*}{other} & /WW\_TuneCP5\_13p6TeV\_pythia8/Run3Summer23BPixNanoAODv12-130X\_mcRun3\_2023\_realistic\_postBPix\_v2-v2/NANOAODSIM & 80.23 \\
+\cline{2-3}
+ & /WZ\_TuneCP5\_13p6TeV\_pythia8/Run3Summer23BPixNanoAODv12-130X\_mcRun3\_2023\_realistic\_postBPix\_v2-v2/NANOAODSIM & 29.1 \\
+\cline{2-3}
+ & /ZZ\_TuneCP5\_13p6TeV\_pythia8/Run3Summer23BPixNanoAODv12-130X\_mcRun3\_2023\_realistic\_postBPix\_v2-v2/NANOAODSIM & 12.75 \\
+\cline{2-3}
+ & /DYto2L-4Jets\_MLL-50\_TuneCP5\_13p6TeV\_madgraphMLM-pythia8/Run3Summer23BPixNanoAODv12-130X\_mcRun3\_2023\_realistic\_postBPix\_v2-v3/NANOAODSIM & 5467 \\
+\cline{2-3}
+ & /DYto2L-4Jets\_MLL-10to50\_TuneCP5\_13p6TeV\_madgraphMLM-pythia8/Run3Summer23BPixNanoAODv12-130X\_mcRun3\_2023\_realistic\_postBPix\_v2-v3/NANOAODSIM & 17380 \\
+
+\end{longtable}
 
 \clearpage
 \section{Object Selection}
@@ -195,20 +1218,20 @@ Standard CMS vertex selection criteria corresponding to the ``goodVertices" flag
 \label{sec:leptons}
 Events with electron or muon candidates identified with the following criteria are vetoed from the analysis. For the selection of electrons, the EGamma POG ``Fall17-noIso-v2" MVA with a ``loose" working point is used for Run 2. The EGamma ``Winter22V1" MVA noIso score is used for Run 3, with a working point that gives similar signal and background efficiencies as Run 2. We further require that the electrons have $p_T > 15 GeV$ and $\left| \eta \right| < 2.5$, excluding those in the barrel-endcap transition region. The ``loose" muon ID recommended by the Muon POG is used to select muon candidates with $p_T > 15 GeV$ and $\left| \eta \right| < 2.5$. To isolate lepton candidates from hadronic activity, we require the ``mini-isolation" of electrons to be less than 0.4 and ``miniIsoId" for muons to be ``loose".
 \subsection{Jets}
-Particle Flow jets clustered with the anti-$k_T$ algorithm with distance parameter R = 0.4. To correct for pileup, charged hadron subraction procedure is used for Run 2, where as PUPPI jets are used for Run 3. Latest jet energy corrections as recommended by the JetMET POG is reapplied to recalibrate from the NanoAoD values. The jets are further required to have $p_T > 35 GeV$ and $\left| \eta \right| <2.4$. Additionally, selected jets are required to pass ``tight" working point of Jet ID as recommended by the JetMET POG.
+ParticleFlow jets clustered with the anti-$k_T$ algorithm with distance parameter R = 0.4. To correct for pileup, charged hadron subraction procedure is used for Run 2, where as PUPPI jets are used for Run 3. Latest jet energy corrections as recommended by the JetMET POG is reapplied to recalibrate from the NanoAoD values. These corrections are applied using the correctionlib tool with the JSON files provided by JetMET POG \href{https://gitlab.cern.ch/cms-nanoAOD/jsonpog-integration/-/tree/master/POG/JME}{here}. JEC corrections already applied in the NanoAoD are always removed and recalibrated using the latest JSON files available to make sure up-to-date correction is applied. JER Smearing is with the recommended \href{https://cms-jerc.web.cern.ch/JER/#smearing-procedures}{"hybrid" method}, similarly with correctionlib and the latest JSON provided by JetMET POG. Since JER scale factors are not available for AK8 jets, we use the smearing for AK4chs/AK4Puppi jets instead as recommended by JetMET POG expert. The jets are further required to have $p_T > 35 GeV$ and $\left| \eta \right| <2.4$. Additionally, selected jets are required to pass ``tight" working point of Jet ID as recommended by the JetMET POG.
 
 \subsubsection{B-tagging}
 
-B jets are identified with the DeepJet algorithm with the ``M'' working point as recommended by the BTV POG, which corresponds to a b jet efficiency of about 80\%. B tag SF corrections as recommended by the BTV POG is applied.
+B jets are identified with the DeepJet algorithm with the ``M'' working point as recommended by the BTV POG, which corresponds to a b jet efficiency of about 80\%. B-tag SF Shape corrections is applied according to \href{https://btv-wiki.docs.cern.ch/PerformanceCalibration/shapeCorrectionSFRecommendations/}{BTV POG recommendation}, using JSON files provided by BTV POG \href{https://gitlab.cern.ch/cms-nanoAOD/jsonpog-integration/-/tree/master/POG/BTV}{here} and correctionlib.
 
 \subsubsection{W and Boosted Top tagging}
 
-For boosted top quarks with $p_T > 400$GeV, or W bosons with $p_T > 200$GeV, the decay products are expected to be contained within a $\Delta R $ of 0.8. We apply Particlenet algorithm to jets clustered with anti-$k_T$ algorithm with a distance parameter of 0.8 to identify these W and boosted top quarks. Working point corresponding to a 1\% mistag rate as recommended by the JetMET POG is used.  
+For boosted top quarks with $p_T > 400$GeV, or W bosons with $p_T > 200$GeV, the decay products are expected to be contained within a $\Delta R $ of 0.8. We apply Particlenet algorithm to jets clustered with anti-$k_T$ algorithm with a distance parameter of 0.8 to identify these W and boosted top quarks. Working point corresponding to a 1\% mistag rate as recommended by the JetMET POG is used. Corrections are applied WITH SFs recommended by the JetMET POG for \href{https://twiki.cern.ch/twiki/bin/view/CMS/ParticleNetSFs}{Run2} and \href{https://indico.cern.ch/event/1459087/#20-update-on-topw-particlenet}{Run3 2022}. Run3 2023 SFs are not yet available.
 
 \subsubsection{Resolved Top tagging}
 \label{sec:restop}
 
-For moderately boosted top quarks, the decay products can be resolved into separate AK4 jets. A dedicated XGBoost BDT trigger is developed for tagging these resolved tops, following the same methodology as the Run2 all-hadronic TTTT analysis \cite{prev_analysis}. From the AK4 jets collection, up to four jets with the highest Deepjet b-tag scores are selected. For each b jet candidate, we identify all the unique two-jet combinations in the AK4 jets collection (excluding the b jet candidate) as  W subjet candidates, with the condition that the combined mass of the two W subjet candidate is within 40 GeV of the true W boson mass, and that the mass of the combined three-jet candidate is within 80 GeV of the true top quark mass. These selected three-jet combinations are the candidates for resolved tops. 
+For moderately boosted top quarks, the decay products can be resolved into separate AK4 jets. A dedicated XGBoost BDT trigger is developed for tagging these resolved tops, following the same methodology as the Run2 all-hadronic TTTT analysis \cite{prev_ftop_analysis}. From the AK4 jets collection, up to four jets with the highest Deepjet b-tag scores are selected. For each b jet candidate, we identify all the unique two-jet combinations in the AK4 jets collection (excluding the b jet candidate) as  W subjet candidates, with the condition that the combined mass of the two W subjet candidate is within 40 GeV of the true W boson mass, and that the mass of the combined three-jet candidate is within 80 GeV of the true top quark mass. These selected three-jet combinations are the candidates for resolved tops. 
 
 The following variables form the inputs to the BDT:
 
@@ -227,7 +1250,7 @@ The following variables form the inputs to the BDT:
   \item The jet constituent multiplicities of the W subjets.
 \end{itemize}
 
-For training, genuine hadronic top candidates are taken from single-lepton $t\bar{t}$ simulation samples, and fake hadronic top candidates from di-lepton $t\bar{t}$ simulation samples, with the requirement of $MET>100$,  $N_{jets}>=5$ and $N_{bjets}>=1$. 2018 samples are used for Run2 model and 2022 samples for Run3. The BDT is trained with the XGBoost library on 500000 candidates for genuine and fake samples each. Before training, to decorrelate from $p_{T}$ of the top candidate, the candidates are reweighted according to the $p_{T}$ of the top candidate in bins of 25 GeV width from 0 Gev to 900 GeV, 50 GeV width from 900 GeV to 1000 GeV, and 100 GeV width from 1000 GeV to 5000 GeV, such that the sum of weights of candidates in each bin is equal. If the resolved top candidates overlap with one another within a $\Delta R$ of 0.4, the lower scoring candidate is rejected.
+For training, genuine hadronic top candidates are taken from single-lepton $t\bar{t}$ simulation samples, and fake hadronic top candidates from di-lepton $t\bar{t}$ simulation samples, with the requirement of $MET>100$,  $N_{jets}>=5$ and $N_{bjets}>=1$. 2018 samples are used for Run2 model and 2022 samples for Run3. The BDT is trained with the XGBoost library on 500000 candidates for genuine and fake samples each. Before training, to decorrelate from $p_{T}$ of the top candidate, the candidates are reweighted according to the $p_{T}$ of the top candidate in bins of 25 GeV width from 0 Gev to 900 GeV, 50 GeV width from 900 GeV to 1000 GeV, and 100 GeV width from 1000 GeV to 5000 GeV, such that the sum of weights of candidates in each bin is equal. If the resolved top candidates overlap with one another within a $\Delta R$ of 0.4, the lower scoring candidate is rejected.\\
 
 The working point for this resolved top tagger is selected at 2\% False Positive Rate and given in Table \ref{tab:topWP}.
 
@@ -252,7 +1275,7 @@ The working point for this resolved top tagger is selected at 2\% False Positive
 \label{tab:topWP}
 \end{table}
 
-Scales factors for tagging efficiencies and misidentification rates are derived for this resolved top tagger. These scale factors are parameterized in the resolved top candidate $p_{T}$, and the uncertainties thereof are propagated as part of the systematic uncertainties. For scale factor derivations, b-tag SF corrections, pileup weight and latest JERC corrections is applied to MC samples in the following procedure.
+Scales factors for tagging efficiencies and misidentification rates are derived for this resolved top tagger. These scale factors are parameterized in the resolved top candidate $p_{T}$, and the uncertainties thereof are propagated as part of the systematic uncertainties. For scale factor derivations, b-tag SF corrections, pileup weight and latest JERC corrections is applied to MC samples in the following procedure and \href{https://indico.cern.ch/event/1458097/#16-xgboost-top-tagger-for-inte}{reported to JeTMET POG}.\\
 
 For the derivation of the misidentification rates, we use a 0-lepton, $N_{b}=1$ region, selected with pure $H_{T}$ triggers and requiring $H_{T}>1200 GeV$. This region was selected to be enriched in QCD multi-jet events and is orthogonal to the signal region via the $N_{b}=1$ requirement. In this region, simulation is normalized to data. To correct the contamination of genuine tops in the data, we estimate the number of genuine tops in data by the number of candidates matched to top quarks at the generator level in simulation, and then subtract it from the data. In simulation, the misidentification rates are measured to be the fraction of fake resolved top candidates that pass the working point. In data, the misidentification rates are measured to be the fraction of candidates (after subtraction of the estimated genuine tops) that pass the working point. In the end, the scale factor is calculated as the ratio of the misidentification rates in data to those in simulation.
 
@@ -538,7 +1561,7 @@ in simulation are shown in the stacked histograms. The event yield in simulation
 \captionof{figure}{Data vs pre- and post-fit distributions in candidate mass for top candidates passing the working point in years for low (left column), medium (middle column), and high (right column) $p_T$ categories. Solid lines correspond to post-fit distributions and dashed lines to pre-fit distributions. Candidates matched to generator-level tops are shown in red. Candidates unmatched to generator-level tops and total candidates are shown in green and blue respectively. The ratio of data to the total pre- and post-fit simulation is shown in the ratio panels. The scale factor extracted from the fit as shown by this figure and figure \ref{fig:tageff_sf_fail} is shown.}
 \label{fig:tageff_sf_pass}
 
-
+\clearpage
 \section{Event Selection}
 \subsection{Baseline Selection and Signal Region}
 We apply to the events passing the triggers described in \autoref{sec:trigger} the following baseline selection: $N_{jet}>=9$, $N_{bjet}>=3$, $H_T>700$ GeV, and no leptons. The objects are defined according to the criteria in \autoref{sec:obj}
@@ -565,10 +1588,10 @@ of boosted tops ($N_{BT}$), and $H_T$.}
 \label{tab:sm_sr_definition}
 
 \subsection{Event-level BDT}
-To further discriminate between signal and background, we implement an event-level BDT with the "CatBoost" library. This library is selected because it is found to perform better as compared to XGBoost BDT and neural networks. We use simulated $t\bar{t}t\bar{t}$ events as signal and a mixture of simulated $t\bar{t}$ and QCD multijet events as background. Training against of mixture of background processes as such are found to perform better than training against $t\bar{t}$ alone. The BDT is trained and applied to each year separately.
-\\
-Following the pre legacy iteration of this analysis, we choose the kinematics of jets, b-jets and the associated variables thereof as inputs for the even-level BDT. The number of boosted W candidates, the $p_T$ of the leading resolved top candidate and b-jet are also used. Event shape variables that reflect event topology information are also included as inputs to the BDT. On the other hand, the number of resolved tops and boosted tops are deliberately excluded from the inputs to the BDT so that thet can be used as independent variables for binning in SR. Resolved and boosted top discriminants are also excluded to prevent the potential dependence on the shape of these discriminants. The following is the optimized set of variables input to the event-level BDT:
-\\
+To further discriminate between signal and background, we implement an event-level BDT with the "CatBoost" library. This library is selected because it is found to perform better as compared to XGBoost BDT and neural networks. We use simulated $t\bar{t}t\bar{t}$ events as signal and a mixture of simulated $t\bar{t}$ and QCD multijet events as background. We require the events the pass the baseline selection of the signal region. Across the different background processes, events are first reweighted proportionally according to the cross section of their respective processes, and then reweighted so that $t\bar{t}$ events take 80\% of the total weights in background. For each year (separate training for preVFP for 2016, EE for 2022 and BPix for 2023) , we use around $20,000$ $t\bar{t}t\bar{t}$ and $15,000$ $t\bar{t}$ events. The use of statistics is limited here since we need to exclude these used events from downstream ML training and statistical analysis. However, for QCD events, we use all events available since it is not used downstream. Around 500 QCD events are available per year. We used CrossEntropy loss function, a growth policy of "Lossguide" and a learning rate of 0.003. We apply further regularization the training by setting "depth" to 2, "l2\_leaf\_reg" to 300, "min\_data\_in\_leaf" to 500 and "max\_leaves" to 10. These parameters are found by a grid search, and are found to combat overtraining under our constrained statistics effectively. Training against of mixture of background processes as such are found to perform better than training against $t\bar{t}$ alone. The BDT is trained and applied to each year separately. Figure \ref{fig:evtbdt_dist} and \ref{fig:evtbdt_roc} are example BDT discriminant distribution and ROC curve (with comparison against prelegacy training) for 2018.\\
+
+Following the pre legacy iteration of this analysis, we choose the kinematics of jets, b-jets and the associated variables thereof as inputs for the even-level BDT. The number of boosted W candidates, the $p_T$ of the leading resolved top candidate and b-jet are also used. Event shape variables that reflect event topology information are also included as inputs to the BDT. On the other hand, the number of resolved tops and boosted tops are deliberately excluded from the inputs to the BDT so that thet can be used as independent variables for binning in SR. Resolved and boosted top discriminants are also excluded to prevent the potential dependence on the shape of these discriminants. Figure \ref{fig:evtbdt_input_vars} shows the distribution of the input variables for signal and background processes on 2018UL dataset. The following is the optimized set of variables input to the event-level BDT:\\
+
 \begin{itemize}
     \item The number of jets present in the event, $N_j$
     \item The number of b-tagged jets present in the event, $N_b$
@@ -603,20 +1626,84 @@ Following the pre legacy iteration of this analysis, we choose the kinematics of
     \]
 \end{itemize}
 
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.3\textwidth]{plots/evtbdt/input_vars/njets_nosys.png}
+    \hfill
+    \includegraphics[width=0.3\textwidth]{plots/evtbdt/input_vars/nbjets_nosys.png}
+    \hfill
+    \includegraphics[width=0.3\textwidth]{plots/evtbdt/input_vars/met_nosys.png}
+
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.3\textwidth]{plots/evtbdt/input_vars/nbsws_nosys.png}
+    \hfill
+    \includegraphics[width=0.3\textwidth]{plots/evtbdt/input_vars/ht_nosys.png}
+    \hfill
+    \includegraphics[width=0.3\textwidth]{plots/evtbdt/input_vars/sfjm_nosys.png}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.3\textwidth]{plots/evtbdt/input_vars/restop1pt_nosys.png}
+    \hfill
+    \includegraphics[width=0.3\textwidth]{plots/evtbdt/input_vars/sphericity_nosys.png}
+    \hfill
+    \includegraphics[width=0.3\textwidth]{plots/evtbdt/input_vars/aplanarity_nosys.png}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.3\textwidth]{plots/evtbdt/input_vars/leadbpt_nosys.png}
+    \hfill
+    \includegraphics[width=0.3\textwidth]{plots/evtbdt/input_vars/bjht_nosys.png}
+    \hfill
+    \includegraphics[width=0.3\textwidth]{plots/evtbdt/input_vars/dphij1j2_nosys.png}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.3\textwidth]{plots/evtbdt/input_vars/dphib1b2_nosys.png}
+    \hfill
+    \includegraphics[width=0.3\textwidth]{plots/evtbdt/input_vars/detaj1j2_nosys.png}
+    \hfill
+    \includegraphics[width=0.3\textwidth]{plots/evtbdt/input_vars/detab1b2_nosys.png}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.3\textwidth]{plots/evtbdt/input_vars/jet7pt_nosys.png}
+    \hfill
+    \includegraphics[width=0.3\textwidth]{plots/evtbdt/input_vars/meanbdisc_nosys.png}
+    \hfill
+    \includegraphics[width=0.3\textwidth]{plots/evtbdt/input_vars/htratio_nosys.png}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.3\textwidth]{plots/evtbdt/input_vars/centrality_nosys.png}
+    \label{fig:evtbdt_input_vars}
+\end{figure}
+\captionof{figure}{Input variable distribution for 2018UL for the event-level BDT. Error bar shows statistical uncertainty of each bin.}
+
+
 \begin{figure}[h!]
     \centering
-    \includegraphics[width=0.8\textwidth]{plots/evtbdt/evtbdt_dist.png} 
+    \includegraphics[width=0.7\textwidth]{plots/evtbdt/evtbdt_dist.png} 
     \caption{As an example, the discriminant distributions for the event-level BDT for signal and background in training and validation samples for 2018.}
     \label{fig:evtbdt_dist} 
 \end{figure}
 
 \begin{figure}[h!]
     \centering
-    \includegraphics[width=0.8\textwidth]{plots/evtbdt/evtbdt_roc.png} 
+    \includegraphics[width=0.7\textwidth]{plots/evtbdt/evtbdt_roc.png} 
     \caption{ROC curves of the event-level BDT for 2018, as compared against the prelegacy model.}
     \label{fig:evtbdt_roc} 
 \end{figure}
 
+\clearpage
 \section{Background Estimation}
 QCD multijet and hadronic $t\bar{t}$ processes are the dominant background of this analysis. Next-to-leading order (NLO) calculations in strong interactions and limited statistics lead to large uncertainties in the simulation of the very high jet and b-jet multiplicity regions of these processes used in this analysis. Therefore, we cannot rely on the simulation-based approach to predict the QCD multijet and $t\bar{t}$ +jets background. To overcome this, we adopt two data-driven methods: the ``extended ABCD " method for data-driven estimation of the absolute rate of the background, and the ``ABCDnn" method for data-driven estimation of the shape of the background.\\
 
@@ -625,9 +1712,22 @@ We divide the phase space into two dimensions using $N_j$, the number of jets, a
 
 To improve the accuracy of the estimation, we extend the CRs to lower multiplicity in $N_j$ as seen in fig \ref{fig:extendedabcd}. Then, yield in the SR can be estimated as $\hat{F}_D = \left( \frac{F_B F_C}{F_A} \right)^2 \left( \frac{F_X}{F_B F_Y} \right)$.\\ Here, $F$ is the estimated $t\bar{t}$ + QCD multijet yield in each Control Region. This is estimated by subtracting the $t\bar{t}t\bar{t}$ MC yield and minor background processes MC yield from the observed yield in data in each Control Region.\\
 
-The extended ABCD method is applied to each $h_T$ bin as specified in table \ref{tab:sm_sr_definition} for each year separately.\\
+The extended ABCD method is applied to each $h_T$ bin as specified in table \ref{tab:sm_sr_definition} for each year separately (separate training for preVFP for 2016, EE for 2022 and BPix for 2023).\\
 
-Closure test conducted on prelegacy 2016 $t\bar{t}$ events requiring 0 lepton and same regions defined on $N_j$ and $N_b$ shows that yield predicted by vanilla ABCD method if off by 18\%. The disagreement between the estimated and true yield improves to 7\% for the extended ABCD method.\\
+Closure test conducted on prelegacy 2016 $t\bar{t}$ events requiring 0 lepton and same regions defined on $N_j$ and $N_b$ shows that yield predicted by vanilla ABCD method if off by 18\%. The disagreement between the estimated and true yield improves to 7\% for the extended ABCD method. A closure test with the same selection conducted on 2022 $t\bar{t}$ dataset shows a similar result: vanilla ABCD method is off by 19.5\% whereas extended ABCD method is only off by less than 1\% as seen in table \ref{tab:abcd_normalization}.\\
+
+\begin{table}[h]
+    \centering
+    \begin{tabular}{|c|c|c|}
+        \hline
+        \textbf{Extended ABCD} & \textbf{ABCD} & \textbf{True} \\
+        \hline
+        $6112 \pm 145.8$ & $4943 \pm 58.95$ & $6139 \pm 38.49$ \\
+        \hline
+    \end{tabular}
+    \caption{The absolute normalization predicted by the extended ABCD method and ABCD method in 2022 TT simulation, in a region satisfying the baseline selection with 0 leptons, $N_j \geq 9$, $N_b \geq 3$, and $H_T > 700$~GeV. The 3rd column shows the true absolute normalization. Only statistical uncertainties are presented.}
+    \label{tab:abcd_normalization}
+\end{table}
 
 Appendix \ref{sec:extendedabcdapp} includes yields for control regions and estimated yield for the signal region for each $H_T$ bin and for each year.
 
@@ -639,15 +1739,17 @@ Appendix \ref{sec:extendedabcdapp} includes yields for control regions and estim
 \end{figure}
 
 \subsection{ABCDnn method}
-We use the ``ABCDnn" method to estimate the shape of the event-level BDT discriminant for the $t\bar{t}$ + QCD multijet background in the Signal Region. Specifically, ``ABCDnn" method utilizes a Machine Learning technique named Neural Autoregressive Flow, which creates transformations between distributions of the feature variables under different conditions. These transformations are constructed as invertible bijective functions implemented as DNNs and learnt during training. In addition, the method automatically take into account the complex correlations between feature variables, so that multi-dimensional distributions can also be estimated. \\
+We use the ``ABCDnn" method \cite{abcdnn_original} to estimate the shape of the event-level BDT discriminant for the $t\bar{t}$ + QCD multijet background in the Signal Region. Specifically, ``ABCDnn" method utilizes a Machine Learning technique named Neural Autoregressive Flow, which creates transformations between distributions of the feature variables under different conditions. These transformations are constructed as invertible bijective functions implemented as DNNs and learnt during training. In addition, the method automatically take into account the complex correlations between feature variables, so that multi-dimensional distributions can also be estimated. \\
 
 Specifically, for this analysis, we use the same definition of Control Regions and Signal Regions as the ones defined for extended ABCD. That is, the neural networks are trained on Control Regions and applied to the Signal Region. For each Control Region, the neural network takes two distributions for training: the normalized distribution of $t\bar{t}$ MC as the input distribution, and the normalized data-driven estimated $t\bar{t}$ + QCD multijet distribution as the target distribution. The target distribution is created by taking the actual observed data distribution and subtract it by the $t\bar{t}t\bar{t}$ MC distribution and other minor background MC distributions. The neural network learns the transformation from the input distribution to the target distribution in each Control Region, as well as the condition, i.e. the label of the Control Region in the phase space, so that it learns how the transformation should change across the phase space defined by $N_j$ and $N_b$. It does this by minimizing the maximum-mean-discrepancy between the output predicted distribution and the target distribution. Finally, the neural network is applied to the input distribution of $t\bar{t}$ MC in the Signal Region to obtain the desired shape of data-driven estimated $t\bar{t}$ + QCD multijet distribution in the Signal Region.\\
 
-The  learned models in this analysis not only transforms from MC distribution to data-driven distribution to compensate for potential data-MC disagreement, but also transforms from a single process distribution ($t\bar{t}$) to dual process ($t\bar{t}$ + QCD multijet distribution). We do not use the MC QCD multijet distribution as input due to limited statistics, especially in the Signal Region.\\
+The learned models in this analysis not only transforms from MC distribution to data-driven distribution to compensate for potential data-MC disagreement, but also transforms from a single process distribution ($t\bar{t}$) to dual process ($t\bar{t}$ + QCD multijet distribution). We do not use the MC QCD multijet distribution as input due to limited statistics, especially in the Signal Region.\\
 
-This training is done for each top-tag instead of each $H_T$ bin because of the limited statistics in each $H_T$ bin. Therefore, for this analysis the feature variables underlying the transformed distributions are event-level BDT discriminant and $H_T$. The predicted $H_T$ of each event in the input distribution is used to place them in the corresponding $H_T$ bin, and the BDT discriminant is used in each $H_T$ bin to create the predicted shape. A separate ``ABCDnn"" model is trained for each year.\\
+This training is done for each top-tag instead of each $H_T$ bin because of the limited statistics in each $H_T$ bin. Therefore, for this analysis the feature variables underlying the transformed distributions are event-level BDT discriminant and $H_T$. The predicted $H_T$ of each event in the input distribution is used to place them in the corresponding $H_T$ bin, and the BDT discriminant is used in each $H_T$ bin to create the predicted shape. A separate ``ABCDnn"" model is trained for each year (merged for 2016/2016preVFP, 2022/2022EE and 2023/2023BPix).\\
 
-A closure test for the method has been done by the previous iteration of this analysis morphing $t\bar{t}$ MC distribution into $t\bar{t}X$ MC distributions, with the same event selection and Control/Signal Region definition as the main analysis. The method was found to predict the target shape well.\\
+We used all remaining statistics for $t\bar{t}$ events (excluding those used in the event-level BDT training). We optimized the network hyperparameters with a combination of manual tuning and grid search, and set the width of our dense layer to 256 and use 4096 minibatch size. The dense layers here are used to condition on the CR labels during training and output the weights and biases of the main network through which feature variables pass through and become morphed. The nafdim, which controls the width of the main network which morphs the feature variables, is set to 60. The depth is set to 3, which means that the entire model is made of 3 consecutive NAF blocks.\\
+
+A closure test for the method has been done by the previous iteration of this analysis morphing $t\bar{t}$ MC distribution into $t\bar{t}X$ MC distributions, with the same event selection and Control/Signal Region definition as the main analysis. We merged 2016, 2017 and 2018 ultralegacy dataset to improve the statistics for this test. The results of the test is in Appendix \ref{sec:abcdnnclosuretest}. The method was found to predict the target shape well.  \\
 
 \subsection{Validation of the background estimation methods}
 \label{sec:validationregion}
@@ -658,11 +1760,48 @@ We find that the estimated yield in the Validation Region in each $H_T$ bin agre
 We find that the predicted shape in the Validation Region largely agrees well with the true shape, especially for $H_T$ bins with higher statistics. The result is in Appendix \ref{sec:abcdnnvalapp}. We account for the disagreement as a systematic uncertainty detailed in section \ref{sec:systabcdnn}. 
 
 
-
-\section{Systematic uncertainties}
+\clearpage
+\section{Systematic Uncertainties}
 \label{sec:syst}
 \subsection{Systematics from background estimation}
-We derive the systematic uncertainties for our background estimation methods from the Validation Region defined in section \ref{sec:validationregion}, where we compare the output (yield/shape) of the specific background estimation method against the truth. We then apply the derived systematics to the Signal Region. These uncertainties are calculated separately for each $H_T$ bin defined in table \ref{tab:sm_sr_definition}.
+We derive the systematic uncertainties for our background estimation methods from the Validation Region defined in section \ref{sec:validationregion}, where we compare the output (yield/shape) of the specific background estimation method against the truth. We then apply the derived systematics to the Signal Region. These uncertainties are calculated separately for each $H_T$ bin defined in table \ref{tab:sm_sr_definition}. A summary of different sources of systematic uncertainties are in table \ref{tab:systematic_uncertainties}.
+
+
+\begin{table}[h!]
+\centering
+\caption{Summary of systematic uncertainties and the ranges of their effects on signal and background yields. The uncertainty type (shape vs normalization only), affected processes, correlations (between processes and/or years), and effects on signal and background yields as \% are shown. Systematic uncertainties are considered for all years unless otherwise indicated. Statistics of extendedABCD is the statistical uncertainties of the QCD+$t\bar{t}$ samples in the Control Regions, propagated via extendedABCD.}
+\label{tab:systematic_uncertainties}
+%\footnotesize
+\resizebox{\textwidth}{!}{
+\begin{tabular}{|l|l|l|l|l|l|}
+\hline
+\textbf{Name} & \textbf{Type} & \textbf{Processes} & \textbf{Correlations} & \textbf{$t\bar{t}t\bar{t}$ Signal Uncertainty (\%)} & \textbf{Background Uncertainty (\%)} \\ \hline
+Statistics of extendedABCD & shape & QCD+$t\bar{t}$ & - & - & 5-30 \\ \hline
+Statistics of transformed samples & shape & QCD+$t\bar{t}$ & - & - & 5 \\ \hline
+Statistics of simulated samples & shape & $t\bar{t}t\bar{t}$, $t\bar{t}X$, other & - & 0-5 & 0-30 \\ \hline
+Data-prediction normalization & lnN & QCD+$t\bar{t}$ & - & - & 6-41 \\ \hline
+Data-prediction shape uncertainty & shape & QCD+$t\bar{t}$ & - & - & n/a \\ \hline
+DeepJet b-tag SF (HF, LF, cferr) & shape & $t\bar{t}t\bar{t}$, $t\bar{t}X$, other & processes+years & 0-40 & 0-40 \\ \hline
+DeepJet b-tag SF (stats) & shape & $t\bar{t}t\bar{t}$, $t\bar{t}X$, other & processes & 0-10 & 0-10 \\ \hline
+Resolved top efficiency SF & shape & $t\bar{t}t\bar{t}$, $t\bar{t}X$, other & processes & 0-5 & 0-5 \\ \hline
+Resolved top mistag SF & shape & $t\bar{t}t\bar{t}$, $t\bar{t}X$, other & processes & 0-10 & 0-10 \\ \hline
+PNet boosted top SF & shape & $t\bar{t}t\bar{t}$, $t\bar{t}X$, other & processes & 0-15 & 0-20 \\ \hline
+PNet boosted W SF & shape & $t\bar{t}t\bar{t}$, $t\bar{t}X$, other & processes & 0-20 & 0-30 \\ \hline
+JER & shape & $t\bar{t}t\bar{t}$, $t\bar{t}X$, other & processes & 0-3 & 0-15 \\ \hline
+JES & shape & $t\bar{t}t\bar{t}$, $t\bar{t}X$, other & processes & 0-15 & 0-25 \\ \hline
+Pileup & shape & $t\bar{t}t\bar{t}$, $t\bar{t}X$, other & processes & 0-2 & 0-10 \\ \hline
+Trigger efficiency & shape & $t\bar{t}t\bar{t}$, $t\bar{t}X$, other & processes & 0-10 & 0-5 \\ \hline
+%Lepton veto & lnN & $t\bar{t}t\bar{t}$, $t\bar{t}X$ & processes & 0-5 & 0-5 \\ \hline
+Luminosity & lnN & $t\bar{t}t\bar{t}$, $t\bar{t}X$, other & processes & 2.3-2.5 & 2.3-2.5 \\ \hline
+%PDF & shape & $t\bar{t}t\bar{t}$, $t\bar{t}X$ & processes+years & 0-10 & 0-10 \\ \hline
+%ISR & shape & $t\bar{t}t\bar{t}$, $t\bar{t}X$ & years & 0-5 & 0-5 \\ \hline
+%FSR & shape & $t\bar{t}t\bar{t}$, $t\bar{t}X$ & years & 0-20 & 0-20 \\ \hline
+%$\mu_R, \mu_F$ & shape & $t\bar{t}t\bar{t}$, $t\bar{t}X$ & years & 0-20 & 0-20 \\ \hline
+Cross section & lnN & $t\bar{t}X$ & processes+years & - & 26 \\ \hline
+%Prefire & lnN & $t\bar{t}t\bar{t}$, $t\bar{t}X$ (2016, 2017) & processes & < 1 & < 1 \\ \hline
+\end{tabular}
+}
+\end{table}
 
 \subsubsection{ExtendedABCD}
 \label{sec:systextendedabcd}
@@ -688,28 +1827,30 @@ We derive an uncertainty for the shape of ABCDnn output from the Validation Regi
 s = \arg\min_s \sum_i \max\left(\frac{|f_i(s) - 1|}{\sigma_i(s)}, \frac{|f_i(0.0) - 1|}{\sigma_i(0.0)}\right)
 \]
 
-where s is a particular shift up (positive) or down (negative), $f_i = \frac{N_{\text{pred}, i}}{N_{\text{truth}, i}}$, the ratio of predicted events over observed events in BDT discriminant bin i, and $\sigma_i$ is the statistical uncertainty in bin i. $\frac{|f_i(s) - 1|}{\sigma_i(s)}$ measures the deviation of ratio in bin i from 1 under shift s, inversely scaled by the statistical uncertainty in that bin. In most cases, the deviation increases for some bins and decreases for the others under a particular shift, therefore a naive minimization of this term across the bins results in bad coverage in the bins whose deviation decreases. These bins are the bins that are supposed to be covered by the shift, since the bins whose deviation increases would be covered by the shift in the opposite direction.\\ 
+where s is a particular shift up (positive) and down (negative), $f_i = \frac{N_{\text{pred}, i}}{N_{\text{truth}, i}}$, the ratio of predicted events over observed events in BDT discriminant bin i, and $\sigma_i$ is the statistical uncertainty in bin i. $\frac{|f_i(s) - 1|}{\sigma_i(s)}$ measures the deviation of ratio in bin i from 1 under shift s, inversely scaled by the statistical uncertainty in that bin. In most cases, the deviation increases for some bins and decreases for the others under a particular shift, therefore a naive minimization of this term across the bins results in bad coverage in the bins whose deviation decreases. These bins are the bins that are supposed to be covered by the shift, since the bins whose deviation increases would be covered by the shift in the opposite direction.\\ 
 
 To overcome this, we include a maximization against the second term
 $\frac{|f_i(0.0) - 1|}{\sigma_i(0.0)}$, which is the same scaled deviation of ratio before shifting. The maximization of the first term against the unshifted scaled deviation of ratio removes the effect of bins whose deviation worsened under a particular shift direction, so that by minimizing this metric, the shifting method can obtain good coverage of disagreement in all bins.\\
 
-Currently, we consider this shape uncertainty as uncorrelated across $H_T$ bins and across years.
+A minimum shift of 1\% is imposed in either direction.\\
+
+Currently, we consider this shape uncertainty as uncorrelated across $H_T$ bins and across years. Comparison of pre-fit binned BDT discriminant distribution between MC and data in the validation regions, where MC includes the data-driven yield and shape estimation, can be seen in Appendix \ref{sec:prefit_vr}.
 
 
 
 \subsubsection{Closure Test on systematic uncertainty estimation for background estimation}
 
-We perform closure tests to make sure that the methods used to estimate the systematic uncertainties of the two background estimation are reasonable. We use ultralegacy 2018 data, using exactly the same requirement as our event selection and inputs to extended ABCD formula, and using the same $H_T$ bin definition as $N_RT$=1, $N_BT$=0 top-tag, but requiring 0 resolved top instead of at least 1 so that the regions are orthogonal from the main analysis. In this region, we estimate the systematic uncertainties of the two background estimation methods in the VR, and apply them to the SR, and finally compare the predicted yield and shape with the truth in SR while taking into account the estimated systematic uncertainties.\\
+We perform closure tests to make sure that the methods used to estimate the systematic uncertainties of the two background estimation are reasonable. We use ultralegacy 2018 data, using exactly the same requirement as our event selection and inputs to extended ABCD formula, and using the same $H_T$ bin definition as $N_RT$=1, $N_BT$=0 top-tag, but requiring 0 resolved top instead of at least 1 so that the regions are orthogonal from the main analysis. We define this as the "Closure Test Region". In this region, we estimate the systematic uncertainties of the two background estimation methods in the VR ($N_RT$=1, $N_BT$=0, $N_{jets}=8$, $N_{bjets}>=3$), and apply them to the SR ($N_RT$=1, $N_BT$=0, $N_{jets}>=9$, $N_{bjets}>=3$), and finally compare the predicted yield and shape with the truth in SR while taking into account the estimated systematic uncertainties. Note that this region is used for the closure test for the systematic uncertainty estimation methods, and is different from the closure tests for extendedABCD shown in Table \ref{tab:abcd_normalization} and for ABCDnn shown in Appendix \ref{sec:abcdnnclosuretest}.\\
 
 For ``extendedABCD", the result shows that the estimated yield in the Signal Region in each $H_T$ bin agrees with the true yield after accounting for statistical error from MC propagated through the extended ABCD formula and statistical error in the true yield, as well as the systematic uncertainty as defined in sec \ref{sec:systextendedabcd}. The result is in Appendix \ref{sec:extendedabcdclosuretestapp}.\\
 
-For ``ABCDnn", the result shows that the systematic uncertainty as defined in sec \ref{sec:systabcdnn} mostly covers the disagreement between the predicted and the true shape in each $H_T$ bin in the Closure Test region. The result is in Appendix \ref{sec:abcdnnclosuretestapp}.\\
+For ``ABCDnn", the result shows that the systematic uncertainty as defined in sec \ref{sec:systabcdnn} mostly covers the disagreement between the predicted and the true shape in each $H_T$ bin in the Closure Test region. The result is in Appendix \ref{sec:abcdnnclosuretest_syst}.\\
 
 \subsection{Other sources of systematic uncertainties}
 
 
 \begin{itemize}
-    \item The statistical uncertainties of SM/top philippic $t\bar{t}t\bar{t}$ signal samples and background processes modeled with MC samples.
+    \item The statistical uncertainties of SM/top philic $t\bar{t}t\bar{t}$ signal samples and background processes modeled with MC samples.
     \item The statistical uncertainties of the estimated QCD + $t\bar{t}$ yields in each CR, propagated through the extendedABCD formula.
     \item The statistical uncertainties of the simulated $t\bar{t}$ events transformed by ABCDnn to form the predicted discriminant distribution of BDT.
     \item The statistical uncertainties from the trigger efficiency corrections, parameterized in $N_b$ and $N_j$.
@@ -718,17 +1859,133 @@ For ``ABCDnn", the result shows that the systematic uncertainty as defined in se
     \item Uncertainties related to correction factors used to correct for the performance of the DeepJet b-tagging algorithm in simulation with respect to data. The DeepJet iterative fit/shape scale factors are used. Scale factors per event are calculated as the  product of the scale factors for all jets in a given event passing pre-selection. The uncertainties are split into several sources, including those affecting HF (heavy-flavor) or LF (light-flavor) jets, uncertainties from charm jets (cferr1 and cferr2), and linear and quadratic statistical fluctuations (LFstats1, LFstats2, HFstats1, HFstats2). These are all considered as separate systematic variations, with statistical variations correlated between processes and uncorrelated between years (LFstats1, LFstats2, HFstats1, HFstats2) and others correlated between both processes and years (HF, LF, cferr1 and cferr2).
     \item Uncertainties associated to the pileup reweighting correction factor.
     \item Jet energy scale (JES) and resolution (JER) uncertainties impacting the reconstruction of jets, including R = 0.4 and R = 0.8 jets, $p_T^{miss}$ , and tagged top, W, and b candidates and their correction factors. The JES systematic uncertainty is currently applied using the combined JES uncertainty. We vary the JES and JER up and down by their systematic uncertainties and propagate the effects through all analysis objects and selections, including in selecting jets and boosted objects and re-propagating the varied jets through our resolved top algorithm. JER and JES variations are correlated between processes but not between years.
-    \item Uncertainties assigned to the integrated luminosity measured by the CMS experiment.
-    \item Uncertainties in the theoretical cross sections used to normalize ttX backgrounds are considered. These impact the number of ttX events in each SR bin. For ttX processes (X=W,Z,H), we assign an uncertainty of 26\% based on the largest deviation of the signal strength observed by CMS for any of these processes (relative to the SM prediction).
+    \item Uncertainties assigned to the integrated luminosity measured by the CMS experiment. According to LUM recommendations for \href{https://twiki.cern.ch/twiki/bin/view/CMS/LumiRecommendationsRun2#Combination_and_correlations}{Run2} and \href{https://twiki.cern.ch/twiki/bin/view/CMS/LumiRecommendationsRun3}{Run3}, the uncorrelated uncertainties are 1.0\%, 2.0\%, 1.5\% respectively for 2016, 2017 and 2018 for run2. Across run2, the correlated uncertainties are 0.6\%, 0.9\% and 2.0\% for 2016, 2017 and 2018. Between 2017 and 2018, there is a further correlated uncertainty of 0.6\% and 0.2\%. The uncertainties are 1.4\% and 1.3\% respectively for 2022 and 2023 for run3. 
+    \item Uncertainties in the theoretical cross sections used to normalize ttX backgrounds are considered. These impact the number of ttX events in each SR bin. For ttX processes (X=W,Z,H), we assign an uncertainty of 26\% based on the largest deviation of the signal strength observed by CMS for any of these processes (relative to the SM prediction), which is the observation of ttH in this case \cite{tth}.
     
 \end{itemize}
-
+\clearpage
 \section{Results and interpretation}
-A binned likelihood analysis is carried out in the SR categories split by resolved and boosted top multiplicities and $H_T$, as defined in Table \ref{tab:sm_sr_definition}. As input to each SR category, the shape and yields of the event-level BDT discriminant of $t\bar{t}t\bar{t}$, $t\bar{t}X$ and other minor background processes are provided to CMSCombine from Monte Carlo, and those of $t\bar{t}$ and QCD processes are provided from data-driven background estimation methods extendedABCD (Section \ref{sec:systextendedabcd}) and ABCDnn (Section \ref{sec:systabcdnn}). \\
+A binned likelihood analysis is carried out in the SR categories split by resolved and boosted top multiplicities and $H_T$, as defined in Table \ref{tab:sm_sr_definition}. As input to each SR category, the shape and yields of the event-level BDT discriminant of $t\bar{t}t\bar{t}$, $t\bar{t}X$ and other minor background processes are provided to CMSCombine from Monte Carlo, and those of $t\bar{t}$ and QCD processes are provided from data-driven background estimation methods extendedABCD (Section \ref{sec:systextendedabcd}) and ABCDnn (Section \ref{sec:systabcdnn}). The event yields for each process in each SR channel are listed in the tables \ref{fig:yield2016}, \ref{fig:yield2017}, \ref{fig:yield2018}, \ref{fig:yield2022}. \\
 
-The systematic uncertainties described in Section \ref{sec:syst} are included in the analysis as nuisance parameters. Up and down variations of the BDT discriminant shapes are provided as inputs for each nuisance parameter corresponding to shape-based systematic variations, while uncertainties affecting only the normalizations of processes are implemented using log-normally distributed constraints on the simulation rates in each data-taking period.\\
+The systematic uncertainties described in Section \ref{sec:syst} are included in the analysis as nuisance parameters. Up and down variations of the BDT discriminant shapes are provided as inputs for each nuisance parameter corresponding to shape-based systematic variations, while uncertainties affecting only the normalizations of processes are implemented using log-normally distributed constraints on the simulation rates in each data-taking period. Pre-fit binned BDT discriminant distribution of MC, including the data-driven estimate of shape and yield and their variances, can be seen in Appendix \ref{sec:prefit_sr}.\\
 
-Currently at the blinded stage, we have the following preliminary result:\\
+
+
+Currently at the blinded stage, we have the following preliminary result. The median expected limit is obtained asymptotically, while the significance is obtained via 500 trials of toy (Asimov dataset shows bias).\\
+
+
+\begin{table}[h!]
+\centering
+\begin{adjustbox}{width=\textwidth}
+\begin{tabular}{>{\raggedright\arraybackslash}p{3cm}ccccc}
+\toprule
+ & & \textbf{tttt} & \textbf{ttx} & \textbf{other} & \textbf{QCD+tt} \\
+\midrule
+\multirow{8}{*}{$N_{RT}=1, N_{BT}=0$} & 700 $\leq$ Ht $<$ 800 & $2.79 \pm 0.04$ & $35.07 \pm 2.48$ & $26.22 \pm 2.68$ & $1763.50 \pm 72.37$ \\
+ & 800 $\leq$ Ht $<$ 900 & $3.19 \pm 0.04$ & $30.54 \pm 2.21$ & $36.42 \pm 3.47$ & $1438.50 \pm 69.82$ \\
+ & 900 $\leq$ Ht $<$ 1000 & $3.08 \pm 0.04$ & $27.87 \pm 2.14$ & $25.46 \pm 2.57$ & $1348.86 \pm 79.41$ \\
+ & 1000 $\leq$ Ht $<$ 1100 & $2.63 \pm 0.04$ & $24.66 \pm 2.11$ & $27.69 \pm 3.20$ & $806.24 \pm 59.18$ \\
+ & 1100 $\leq$ Ht $<$ 1200 & $1.98 \pm 0.04$ & $16.43 \pm 2.02$ & $24.41 \pm 3.31$ & $606.99 \pm 56.13$ \\
+ & 1200 $\leq$ Ht $<$ 1300 & $1.50 \pm 0.03$ & $9.97 \pm 1.91$ & $16.31 \pm 1.99$ & $569.46 \pm 65.10$ \\
+ & 1300 $\leq$ Ht $<$ 1500 & $1.62 \pm 0.04$ & $20.32 \pm 2.24$ & $27.36 \pm 3.22$ & $508.92 \pm 56.53$ \\
+ & Ht $\geq$ 1500 & $1.42 \pm 0.04$ & $25.64 \pm 2.90$ & $36.69 \pm 3.60$ & $507.57 \pm 65.56$ \\
+\midrule
+\multirow{2}{*}{$N_{RT}=1, N_{BT}=1$} & 700 $\leq$ Ht $<$ 1400 & $2.69 \pm 0.04$ & $12.87 \pm 1.61$ & $6.56 \pm 1.38$ & $378.31 \pm 44.48$ \\
+ & Ht $\geq$ 1400 & $4.44 \pm 0.07$ & $18.90 \pm 3.16$ & $18.36 \pm 3.00$ & $376.07 \pm 73.49$ \\
+\midrule
+\multirow{2}{*}{$N_{RT}=2$} & 700 $\leq$ Ht $<$ 1100 & $2.96 \pm 0.04$ & $19.12 \pm 1.53$ & $4.81 \pm 1.31$ & $408.11 \pm 42.71$ \\
+ & Ht $\geq$ 1100 & $3.25 \pm 0.05$ & $15.77 \pm 1.99$ & $4.99 \pm 1.42$ & $135.28 \pm 33.46$ \\
+\bottomrule
+\end{tabular}
+\end{adjustbox}
+\caption{Yields of tttt, ttX, other bakcground and data-driven estimated QCD+tt processes in the Signal Region of 2016.}
+\label{fig:yield2016}
+\end{table}
+
+\begin{table}[h!]
+\centering
+\begin{adjustbox}{width=\textwidth}
+\begin{tabular}{>{\raggedright\arraybackslash}p{3cm}ccccc}
+\toprule
+ & & \textbf{tttt} & \textbf{ttX} & \textbf{other} & \textbf{QCD+tt} \\
+\midrule
+\multirow{8}{*}{$N_{RT}=1, N_{BT}=0$} & 700 $\leq$ Ht $<$ 800 & $2.87 \pm 0.03$ & $28.57 \pm 1.89$ & $31.27 \pm 4.19$ & $1732.06 \pm 76.57$ \\
+ & 800 $\leq$ Ht $<$ 900 & $3.40 \pm 0.04$ & $36.08 \pm 1.95$ & $25.14 \pm 2.20$ & $1594.95 \pm 82.52$ \\
+ & 900 $\leq$ Ht $<$ 1000 & $3.17 \pm 0.04$ & $24.01 \pm 1.65$ & $19.60 \pm 1.74$ & $1106.32 \pm 106.67$ \\
+ & 1000 $\leq$ Ht $<$ 1100 & $2.50 \pm 0.03$ & $18.29 \pm 1.28$ & $16.17 \pm 1.52$ & $812.48 \pm 62.89$ \\
+ & 1100 $\leq$ Ht $<$ 1200 & $1.84 \pm 0.03$ & $13.55 \pm 1.12$ & $16.52 \pm 1.69$ & $581.11 \pm 55.87$ \\
+ & 1200 $\leq$ Ht $<$ 1300 & $1.16 \pm 0.02$ & $9.44 \pm 1.05$ & $14.31 \pm 1.55$ & $566.33 \pm 66.77$ \\
+ & 1300 $\leq$ Ht $<$ 1500 & $1.20 \pm 0.02$ & $10.48 \pm 1.20$ & $12.68 \pm 1.20$ & $538.62 \pm 60.02$ \\
+ & Ht $\geq$ 1500 & $0.78 \pm 0.02$ & $9.64 \pm 1.17$ & $15.99 \pm 1.27$ & $464.71 \pm 57.93$ \\
+\midrule
+\multirow{2}{*}{$N_{RT}=1, N_{BT}=1$} & 700 $\leq$ Ht $<$ 1400 & $1.75 \pm 0.02$ & $9.63 \pm 0.98$ & $4.15 \pm 0.86$ & $289.36 \pm 34.27$ \\
+ & Ht $\geq$ 1400 & $1.94 \pm 0.02$ & $7.25 \pm 0.76$ & $4.00 \pm 0.65$ & $347.34 \pm 67.38$ \\
+\midrule
+\multirow{2}{*}{$N_{RT}\geq 2$} & 700 $\leq$ Ht $<$ 1100 & $2.90 \pm 0.03$ & $16.67 \pm 1.37$ & $6.77 \pm 1.31$ & $413.93 \pm 44.52$ \\
+ & Ht $\geq$ 1100 & $2.20 \pm 0.03$ & $9.41 \pm 0.81$ & $2.77 \pm 0.65$ & $191.45 \pm 45.09$ \\
+\bottomrule
+\end{tabular}
+\end{adjustbox}
+\caption{Yields of tttt, ttX, other bakcground and data-driven estimated QCD+tt processes in the Signal Region of 2017.}
+\label{fig:yield2017}
+\end{table}
+
+\begin{table}[h!]
+\centering
+\begin{adjustbox}{width=\textwidth}
+\begin{tabular}{>{\raggedright\arraybackslash}p{3cm}ccccc}
+\toprule
+& & \textbf{tttt} & \textbf{ttx} & \textbf{other} & \textbf{QCD+tt} \\
+\midrule
+\multirow{8}{*}{$N_{RT}=1, N_{BT}=0$} & 700 $\leq$ Ht $<$ 800 & $4.24 \pm 0.04$ & $46.65 \pm 2.67$ & $42.05 \pm 3.34$ & $2755.76 \pm 96.26$ \\
+ & 800 $\leq$ Ht $<$ 900 & $4.93 \pm 0.05$ & $47.82 \pm 2.75$ & $49.07 \pm 4.47$ & $2397.37 \pm 96.79$ \\
+ & 900 $\leq$ Ht $<$ 1000 & $4.67 \pm 0.05$ & $37.03 \pm 2.26$ & $36.91 \pm 3.01$ & $1926.95 \pm 93.86$ \\
+ & 1000 $\leq$ Ht $<$ 1100 & $3.81 \pm 0.04$ & $33.50 \pm 2.42$ & $30.69 \pm 2.60$ & $1492.59 \pm 89.64$ \\
+ & 1100 $\leq$ Ht $<$ 1200 & $2.82 \pm 0.04$ & $23.24 \pm 1.95$ & $27.78 \pm 2.97$ & $1028.50 \pm 76.64$ \\
+ & 1200 $\leq$ Ht $<$ 1300 & $1.99 \pm 0.03$ & $17.28 \pm 1.85$ & $20.71 \pm 2.21$ & $919.48 \pm 84.45$ \\
+ & 1300 $\leq$ Ht $<$ 1500 & $2.24 \pm 0.04$ & $22.44 \pm 2.22$ & $25.72 \pm 2.20$ & $779.95 \pm 71.94$ \\
+ & Ht $\geq$ 1500 & $1.63 \pm 0.03$ & $21.11 \pm 1.91$ & $38.71 \pm 2.87$ & $1076.03 \pm 108.71$ \\
+\midrule
+\multirow{2}{*}{$N_{RT}=1, N_{BT}=1$} & 700 $\leq$ Ht $<$ 1400 & $3.37 \pm 0.04$ & $17.86 \pm 1.85$ & $10.95 \pm 2.39$ & $383.82 \pm 39.46$ \\
+ & Ht $\geq$ 1400 & $4.58 \pm 0.05$ & $17.85 \pm 2.12$ & $15.07 \pm 1.85$ & $431.24 \pm 69.58$ \\
+\midrule
+\multirow{2}{*}{$N_{RT}=2$} & 700 $\leq$ Ht $<$ 1100 & $4.29 \pm 0.04$ & $29.78 \pm 2.05$ & $12.62 \pm 2.68$ & $638.34 \pm 55.12$ \\
+ & Ht $\geq$ 1100 & $4.04 \pm 0.04$ & $18.20 \pm 1.91$ & $5.58 \pm 1.36$ & $267.33 \pm 48.23$ \\
+\bottomrule
+\end{tabular}
+\end{adjustbox}
+\caption{Yields of tttt, ttX, other bakcground and data-driven estimated QCD+tt processes in the Signal Region of 2018.}
+    \label{fig:yield2018}
+\end{table}
+
+
+\begin{table}[h!]
+\centering
+\begin{adjustbox}{width=\textwidth}
+\begin{tabular}{>{\raggedright\arraybackslash}p{3cm}ccccc}
+\toprule
+ & & \textbf{tttt} & \textbf{ttx} & \textbf{other} & \textbf{QCD+tt} \\
+\midrule
+\multirow{8}{*}{$N_{RT}=1, N_{BT}=0$} & 700 $\leq$ Ht $<$ 800 & $1.32 \pm 0.03$ & $15.25 \pm 1.46$ & $17.04 \pm 2.17$ & $771.57 \pm 45.17$ \\
+ & 800 $\leq$ Ht $<$ 900 & $1.70 \pm 0.03$ & $19.20 \pm 1.54$ & $24.63 \pm 7.77$ & $772.71 \pm 50.14$ \\
+ & 900 $\leq$ Ht $<$ 1000 & $1.61 \pm 0.04$ & $15.58 \pm 1.53$ & $18.66 \pm 2.20$ & $592.81 \pm 45.15$ \\
+ & 1000 $\leq$ Ht $<$ 1100 & $1.45 \pm 0.03$ & $14.46 \pm 1.35$ & $16.87 \pm 2.97$ & $513.32 \pm 47.09$ \\
+ & 1100 $\leq$ Ht $<$ 1200 & $1.10 \pm 0.03$ & $8.95 \pm 1.16$ & $13.83 \pm 2.26$ & $442.53 \pm 49.53$ \\
+ & 1200 $\leq$ Ht $<$ 1300 & $0.81 \pm 0.03$ & $10.64 \pm 1.15$ & $9.14 \pm 2.07$ & $283.01 \pm 38.38$ \\
+ & 1300 $\leq$ Ht $<$ 1500 & $0.89 \pm 0.03$ & $11.99 \pm 1.34$ & $13.30 \pm 1.55$ & $270.64 \pm 37.71$ \\
+ & Ht $\geq$ 1500 & $0.66 \pm 0.03$ & $13.58 \pm 1.36$ & $21.51 \pm 3.96$ & $323.68 \pm 51.58$ \\
+\midrule
+\multirow{2}{*}{$N_{RT}=1, N_{BT}=1$} & 700 $\leq$ Ht $<$ 1400 & $1.38 \pm 0.03$ & $7.66 \pm 1.12$ & $3.38 \pm 0.75$ & $196.61 \pm 29.13$ \\
+ & Ht $\geq$ 1400 & $1.99 \pm 0.04$ & $8.80 \pm 1.18$ & $5.88 \pm 0.83$ & $164.39 \pm 37.38$ \\
+\midrule
+\multirow{2}{*}{$N_{RT}\geq 2$} & 700 $\leq$ Ht $<$ 1100 & $1.58 \pm 0.03$ & $13.15 \pm 1.37$ & $4.60 \pm 0.99$ & $209.70 \pm 26.24$ \\
+ & Ht $\geq$ 1100 & $1.71 \pm 0.04$ & $8.76 \pm 1.15$ & $2.52 \pm 0.40$ & $148.26 \pm 37.76$ \\
+\bottomrule
+\end{tabular}
+\end{adjustbox}
+\caption{Yields of tttt, ttX, other bakcground and data-driven estimated QCD+tt processes in the Signal Region of 2022.}
+\label{fig:yield2022}
+\end{table}
 
 \begin{table}[h!]
     \centering
@@ -736,65 +1993,825 @@ Currently at the blinded stage, we have the following preliminary result:\\
         \toprule
         & \textbf{Expected significance} & \textbf{Median expected limit} \\
         \midrule
-        2016 + 2016preVFP & 0.753 & 3.281 \\
-        2017              & 0.669 & 4.813 \\
-        2018              & 0.493 & 5.281 \\
-        2022 + 2022EE     & 0.753 & 3.688 \\
+        2016 + 2016preVFP & 0.340 & 6.500 \\
+        2017              & 0.594 & 5.094 \\
+        2018              & 0.402 & 5.625 \\
+        2022 + 2022EE     & 0.298 & 7.375 \\
         \midrule
-        \textbf{Total}    & \textbf{1.441} & \textbf{1.500} \\
+        \textbf{Total}    & \textbf{0.614} & \textbf{2.289} \\
         \bottomrule
     \end{tabular}
     \caption{Expected significance and median expected limits for SM $T\bar{T}T\bar{T}$.}
     \label{tab:combine_res_blineded_sm}
 \end{table}
 
-\begin{table}[h!]
-    \centering
-    \begin{tabular}{l c c c}
-        \toprule
-        \textbf{$M_{v_{1}}$ / GeV} & \textbf{$c_t$} & \textbf{Expected significance} & \textbf{Median expected limit} \\
-        \midrule
-        \multirow{3}{*}{1400} & 3.0 & 0.928 & 2.289 \\
-                              & 2.5 & 0.700 & 3.047 \\
-                              & 2.0 & 0.446 & 4.813 \\
-        \midrule
-        \multirow{3}{*}{1200} & 3.0 & 1.838 & 1.129 \\
-                              & 2.5 & 1.330 & 1.578 \\
-                              & 2.0 & 0.947 & 2.242 \\
-        \midrule
-        \multirow{3}{*}{1000} & 3.0 & 3.594 & \textbf{0.561} \\
-                              & 2.5 & 2.744 & \textbf{0.746} \\
-                              & 2.0 & 2.001 & 1.039 \\
-        \midrule
-        \multirow{3}{*}{800}  & 2.5 & 5.444 & \textbf{0.361} \\
-                              & 2.0 & 3.965 & \textbf{0.506} \\
-                              & 1.5 & 2.586 & \textbf{0.793} \\
-        \midrule
-        \multirow{3}{*}{600}  & 2.5 & 10.062 & \textbf{0.192} \\
-                              & 2.0 & 7.471  & \textbf{0.259} \\
-                              & 1.5 & 5.013  & \textbf{0.393} \\
-        \bottomrule
-    \end{tabular}
-    \caption{Expected significance and median expected limits for various $M_{v_{1}}$ and $c_t$ values for the top-philic BSM model for 2018.}
-    \label{tab:combine_res_top_philic}
-\end{table}
+%\begin{table}[h!]
+%    \centering
+%    \begin{tabular}{l c c c}
+%        \toprule
+%        \textbf{$M_{v_{1}}$ / GeV} & \textbf{$c_t$} & \textbf{Expected significance} & \textbf{Median expected limit} \\
+%        \midrule
+%        \multirow{3}{*}{1400} & 3.0 & 0.928 & 2.289 \\
+%                              & 2.5 & 0.700 & 3.047 \\
+%                              & 2.0 & 0.446 & 4.813 \\
+%        \midrule
+%        \multirow{3}{*}{1200} & 3.0 & 1.838 & 1.129 \\
+%                              & 2.5 & 1.330 & 1.578 \\
+%                              & 2.0 & 0.947 & 2.242 \\
+%        \midrule
+%        \multirow{3}{*}{1000} & 3.0 & 3.594 & \textbf{0.561} \\
+%                              & 2.5 & 2.744 & \textbf{0.746} \\
+%                              & 2.0 & 2.001 & 1.039 \\
+%        \midrule
+%        \multirow{3}{*}{800}  & 2.5 & 5.444 & \textbf{0.361} \\
+%                              & 2.0 & 3.965 & \textbf{0.506} \\
+%                              & 1.5 & 2.586 & \textbf{0.793} \\
+%        \midrule
+%        \multirow{3}{*}{600}  & 2.5 & 10.062 & \textbf{0.192} \\
+%                              & 2.0 & 7.471  & \textbf{0.259} \\
+%                              & 1.5 & 5.013  & \textbf{0.393} \\
+%        \bottomrule
+%    \end{tabular}
+%    \caption{Expected significance and median expected limits for various $M_{v_{1}}$ and $c_t$ values for the top-philic BSM model for 2018.}
+%    \label{tab:combine_res_top_philic}
+%\end{table}
+\clearpage
 
 \appendix
-\section{Control Region Distributions}
-\section{Resolved top tagger SF distributions}
-\section{Event-level BDT distributions}
-\section{Extended ABCD yields}
+\newcounter{img}
+\section{Pre-fit binned BDT distribution for Validation Region}
+\label{sec:prefit_vr}
+
+\setcounter{img}{-1}
+\begin{figure}[H]
+    \centering
+    % Loop for the first 4 rows of 3 images each
+    \newcount\row
+    \row=0
+    \whiledo{\row < 4}{%
+        \stepcounter{img}
+        \begin{minipage}[b]{0.3\textwidth}
+            \centering
+            \includegraphics[width=\textwidth]{plots/prefit_binned_VR/2016merged_\arabic{img}.png}
+        \end{minipage}%
+        \stepcounter{img}
+        \begin{minipage}[b]{0.3\textwidth}
+            \centering
+            \includegraphics[width=\textwidth]{plots/prefit_binned_VR/2016merged_\arabic{img}.png}
+        \end{minipage}%
+        \stepcounter{img}
+        \begin{minipage}[b]{0.3\textwidth}
+            \centering
+            \includegraphics[width=\textwidth]{plots/prefit_binned_VR/2016merged_\arabic{img}.png}
+        \end{minipage}
+
+        \vskip 0.5cm
+        \advance\row by 1
+    }
+\end{figure}
+\captionof{figure}{Pre-fit binned BDT distribution for Validation Region for 2016. DDBKG (data-driven background) is the predicted TT+QCD distribution from extendedABCD and ABCDnn. DDBKG Up/Down is the shift in distribution from systematic uncertainty estimation of ABCDnn. Shaded region represented statistical + normalization systematic uncertainty from extendedABCD.}
+
+\setcounter{img}{-1}
+\begin{figure}[H]
+    \centering
+    % Loop for the first 4 rows of 3 images each
+    \newcount\row
+    \row=0
+    \whiledo{\row < 4}{%
+        \stepcounter{img}
+        \begin{minipage}[b]{0.3\textwidth}
+            \centering
+            \includegraphics[width=\textwidth]{plots/prefit_binned_VR/2017_\arabic{img}.png}
+        \end{minipage}%
+        \stepcounter{img}
+        \begin{minipage}[b]{0.3\textwidth}
+            \centering
+            \includegraphics[width=\textwidth]{plots/prefit_binned_VR/2017_\arabic{img}.png}
+        \end{minipage}%
+        \stepcounter{img}
+        \begin{minipage}[b]{0.3\textwidth}
+            \centering
+            \includegraphics[width=\textwidth]{plots/prefit_binned_VR/2017_\arabic{img}.png}
+        \end{minipage}
+
+        \vskip 0.5cm
+        \advance\row by 1
+    }
+\end{figure}
+\captionof{figure}{Pre-fit binned BDT distribution for Validation Region for 2017. DDBKG (data-driven background) is the predicted TT+QCD distribution from extendedABCD and ABCDnn. DDBKG Up/Down is the shift in distribution from systematic uncertainty estimation of ABCDnn. Shaded region represented statistical + normalization systematic uncertainty from extendedABCD.}
+
+\setcounter{img}{-1}
+\begin{figure}[H]
+    \centering
+    % Loop for the first 4 rows of 3 images each
+    \newcount\row
+    \row=0
+    \whiledo{\row < 4}{%
+        \stepcounter{img}
+        \begin{minipage}[b]{0.3\textwidth}
+            \centering
+            \includegraphics[width=\textwidth]{plots/prefit_binned_VR/2018_\arabic{img}.png}
+        \end{minipage}%
+        \stepcounter{img}
+        \begin{minipage}[b]{0.3\textwidth}
+            \centering
+            \includegraphics[width=\textwidth]{plots/prefit_binned_VR/2018_\arabic{img}.png}
+        \end{minipage}%
+        \stepcounter{img}
+        \begin{minipage}[b]{0.3\textwidth}
+            \centering
+            \includegraphics[width=\textwidth]{plots/prefit_binned_VR/2018_\arabic{img}.png}
+        \end{minipage}
+
+        \vskip 0.5cm
+        \advance\row by 1
+    }
+\end{figure}
+\captionof{figure}{Pre-fit binned BDT distribution for Validation Region for 2018. DDBKG (data-driven background) is the predicted TT+QCD distribution from extendedABCD and ABCDnn. DDBKG Up/Down is the shift in distribution from systematic uncertainty estimation of ABCDnn. Shaded region represented statistical + normalization systematic uncertainty from extendedABCD.}
+
+
+\setcounter{img}{-1}
+\begin{figure}[H]
+    \centering
+    % Loop for the first 4 rows of 3 images each
+    \newcount\row
+    \row=0
+    \whiledo{\row < 4}{%
+        \stepcounter{img}
+        \begin{minipage}[b]{0.3\textwidth}
+            \centering
+            \includegraphics[width=\textwidth]{plots/prefit_binned_VR/2022merged_\arabic{img}.png}
+        \end{minipage}%
+        \stepcounter{img}
+        \begin{minipage}[b]{0.3\textwidth}
+            \centering
+            \includegraphics[width=\textwidth]{plots/prefit_binned_VR/2022merged_\arabic{img}.png}
+        \end{minipage}%
+        \stepcounter{img}
+        \begin{minipage}[b]{0.3\textwidth}
+            \centering
+            \includegraphics[width=\textwidth]{plots/prefit_binned_VR/2022merged_\arabic{img}.png}
+        \end{minipage}
+
+        \vskip 0.5cm
+        \advance\row by 1
+    }
+\end{figure}
+\captionof{figure}{Pre-fit binned BDT distribution for Validation Region for 2022. DDBKG (data-driven background) is the predicted TT+QCD distribution from extendedABCD and ABCDnn. DDBKG Up/Down is the shift in distribution from systematic uncertainty estimation of ABCDnn. Shaded region represented statistical + normalization systematic uncertainty from extendedABCD.}
+
+\section{Pre-fit binned BDT distribution for Signal Region}
+\label{sec:prefit_sr}
+
+
+\setcounter{img}{-1}
+\begin{figure}[H]
+    \centering
+    % Loop for the first 4 rows of 3 images each
+    \newcount\row
+    \row=0
+    \whiledo{\row < 4}{%
+        \stepcounter{img}
+        \begin{minipage}[b]{0.3\textwidth}
+            \centering
+            \includegraphics[width=\textwidth]{plots/prefit_binned_SR/2016merged_\arabic{img}.png}
+        \end{minipage}%
+        \stepcounter{img}
+        \begin{minipage}[b]{0.3\textwidth}
+            \centering
+            \includegraphics[width=\textwidth]{plots/prefit_binned_SR/2016merged_\arabic{img}.png}
+        \end{minipage}%
+        \stepcounter{img}
+        \begin{minipage}[b]{0.3\textwidth}
+            \centering
+            \includegraphics[width=\textwidth]{plots/prefit_binned_SR/2016merged_\arabic{img}.png}
+        \end{minipage}
+
+        \vskip 0.5cm
+        \advance\row by 1
+    }
+\end{figure}
+\captionof{figure}{Pre-fit binned BDT distribution for Signal Region for 2016. DDBKG (data-driven background) is the predicted TT+QCD distribution from extendedABCD and ABCDnn. DDBKG Up/Down is the shift in distribution from systematic uncertainty estimation of ABCDnn. Shaded region represented statistical + normalization systematic unceetainty from extendedABCD.}
+
+\setcounter{img}{-1}
+\begin{figure}[H]
+    \centering
+    % Loop for the first 4 rows of 3 images each
+    \newcount\row
+    \row=0
+    \whiledo{\row < 4}{%
+        \stepcounter{img}
+        \begin{minipage}[b]{0.3\textwidth}
+            \centering
+            \includegraphics[width=\textwidth]{plots/prefit_binned_SR/2017_\arabic{img}.png}
+        \end{minipage}%
+        \stepcounter{img}
+        \begin{minipage}[b]{0.3\textwidth}
+            \centering
+            \includegraphics[width=\textwidth]{plots/prefit_binned_SR/2017_\arabic{img}.png}
+        \end{minipage}%
+        \stepcounter{img}
+        \begin{minipage}[b]{0.3\textwidth}
+            \centering
+            \includegraphics[width=\textwidth]{plots/prefit_binned_SR/2017_\arabic{img}.png}
+        \end{minipage}
+
+        \vskip 0.5cm
+        \advance\row by 1
+    }
+\end{figure}
+\captionof{figure}{Pre-fit binned BDT distribution for Signal Region for 2017. DDBKG (data-driven background) is the predicted TT+QCD distribution from extendedABCD and ABCDnn. DDBKG Up/Down is the shift in distribution from systematic uncertainty estimation of ABCDnn. Shaded region represented statistical + normalization systematic unceetainty from extendedABCD.}
+
+\setcounter{img}{-1}
+\begin{figure}[H]
+    \centering
+    % Loop for the first 4 rows of 3 images each
+    \newcount\row
+    \row=0
+    \whiledo{\row < 4}{%
+        \stepcounter{img}
+        \begin{minipage}[b]{0.3\textwidth}
+            \centering
+            \includegraphics[width=\textwidth]{plots/prefit_binned_SR/2018_\arabic{img}.png}
+        \end{minipage}%
+        \stepcounter{img}
+        \begin{minipage}[b]{0.3\textwidth}
+            \centering
+            \includegraphics[width=\textwidth]{plots/prefit_binned_SR/2018_\arabic{img}.png}
+        \end{minipage}%
+        \stepcounter{img}
+        \begin{minipage}[b]{0.3\textwidth}
+            \centering
+            \includegraphics[width=\textwidth]{plots/prefit_binned_SR/2018_\arabic{img}.png}
+        \end{minipage}
+
+        \vskip 0.5cm
+        \advance\row by 1
+    }
+\end{figure}
+\captionof{figure}{Pre-fit binned BDT distribution for Signal Region for 2018. DDBKG (data-driven background) is the predicted TT+QCD distribution from extendedABCD and ABCDnn. DDBKG Up/Down is the shift in distribution from systematic uncertainty estimation of ABCDnn. Shaded region represented statistical + normalization systematic unceetainty from extendedABCD.}
+
+\setcounter{img}{-1}
+\begin{figure}[H]
+    \centering
+    % Loop for the first 4 rows of 3 images each
+    \newcount\row
+    \row=0
+    \whiledo{\row < 4}{%
+        \stepcounter{img}
+        \begin{minipage}[b]{0.3\textwidth}
+            \centering
+            \includegraphics[width=\textwidth]{plots/prefit_binned_SR/2022merged_\arabic{img}.png}
+        \end{minipage}%
+        \stepcounter{img}
+        \begin{minipage}[b]{0.3\textwidth}
+            \centering
+            \includegraphics[width=\textwidth]{plots/prefit_binned_SR/2022merged_\arabic{img}.png}
+        \end{minipage}%
+        \stepcounter{img}
+        \begin{minipage}[b]{0.3\textwidth}
+            \centering
+            \includegraphics[width=\textwidth]{plots/prefit_binned_SR/2022merged_\arabic{img}.png}
+        \end{minipage}
+
+        \vskip 0.5cm
+        \advance\row by 1
+    }
+\end{figure}
+\captionof{figure}{Pre-fit binned BDT distribution for Signal Region for 2022. DDBKG (data-driven background) is the predicted TT+QCD distribution from extendedABCD and ABCDnn. DDBKG Up/Down is the shift in distribution from systematic uncertainty estimation of ABCDnn. Shaded region represented statistical + normalization systematic unceetainty from extendedABCD.}
+
+\clearpage
+\section{Extended ABCD yields in signal region}
 \label{sec:extendedabcdapp}
-\section{Extended ABCD validation}
+
+\setcounter{img}{-1}
+\begin{figure}[H]
+    \centering
+    % Loop for the first 4 rows of 3 images each
+    \newcount\row
+    \row=0
+    \whiledo{\row < 4}{%
+        \stepcounter{img}
+        \begin{minipage}[b]{0.3\textwidth}
+            \centering
+            \includegraphics[width=\textwidth]{plots/extendedabcd/extendedabcd_2016pre_sr_\arabic{img}.png}
+        \end{minipage}%
+        \stepcounter{img}
+        \begin{minipage}[b]{0.3\textwidth}
+            \centering
+            \includegraphics[width=\textwidth]{plots/extendedabcd/extendedabcd_2016pre_sr_\arabic{img}.png}
+        \end{minipage}%
+        \stepcounter{img}
+        \begin{minipage}[b]{0.3\textwidth}
+            \centering
+            \includegraphics[width=\textwidth]{plots/extendedabcd/extendedabcd_2016pre_sr_\arabic{img}.png}
+        \end{minipage}
+
+        \vskip 0.5cm
+        \advance\row by 1
+    }
+\end{figure}
+\captionof{figure}{Left: Yields of data and MC in signal region for 2016preVFP. Right: Inputs to the extendedABCD algorithm are the (Data - MC minor backgrounds - MC TTTT) yields in the five control regions Y, C, X, A, and B. Predicted yield of TT+QCD is in region D. Uncertainty shown are statistical uncertainty of the CR inputs propagated.}
+
+\setcounter{img}{-1}
+\begin{figure}[H]
+    \centering
+    % Loop for the first 4 rows of 3 images each
+    \newcount\row
+    \row=0
+    \whiledo{\row < 4}{%
+        \stepcounter{img}
+        \begin{minipage}[b]{0.3\textwidth}
+            \centering
+            \includegraphics[width=\textwidth]{plots/extendedabcd/extendedabcd_2016_sr_\arabic{img}.png}
+        \end{minipage}%
+        \stepcounter{img}
+        \begin{minipage}[b]{0.3\textwidth}
+            \centering
+            \includegraphics[width=\textwidth]{plots/extendedabcd/extendedabcd_2016_sr_\arabic{img}.png}
+        \end{minipage}%
+        \stepcounter{img}
+        \begin{minipage}[b]{0.3\textwidth}
+            \centering
+            \includegraphics[width=\textwidth]{plots/extendedabcd/extendedabcd_2016_sr_\arabic{img}.png}
+        \end{minipage}
+
+        \vskip 0.5cm
+        \advance\row by 1
+    }
+\end{figure}
+\captionof{figure}{Left: Yields of data and MC in signal region for 2016. Right: Inputs to the extendedABCD algorithm are the (Data - MC minor backgrounds - MC TTTT) yields in the five control regions Y, C, X, A, and B. Predicted yield of TT+QCD is in region D. Uncertainty shown are statistical uncertainty of the CR inputs propagated.}
+
+\setcounter{img}{-1}
+\begin{figure}[H]
+    \centering
+    % Loop for the first 4 rows of 3 images each
+    \newcount\row
+    \row=0
+    \whiledo{\row < 4}{%
+        \stepcounter{img}
+        \begin{minipage}[b]{0.3\textwidth}
+            \centering
+            \includegraphics[width=\textwidth]{plots/extendedabcd/extendedabcd_2017_sr_\arabic{img}.png}
+        \end{minipage}%
+        \stepcounter{img}
+        \begin{minipage}[b]{0.3\textwidth}
+            \centering
+            \includegraphics[width=\textwidth]{plots/extendedabcd/extendedabcd_2017_sr_\arabic{img}.png}
+        \end{minipage}%
+        \stepcounter{img}
+        \begin{minipage}[b]{0.3\textwidth}
+            \centering
+            \includegraphics[width=\textwidth]{plots/extendedabcd/extendedabcd_2017_sr_\arabic{img}.png}
+        \end{minipage}
+
+        \vskip 0.5cm
+        \advance\row by 1
+    }
+\end{figure}
+\captionof{figure}{Left: Yields of data and MC in signal region for 2017. Right: Inputs to the extendedABCD algorithm are the (Data - MC minor backgrounds - MC TTTT) yields in the five control regions Y, C, X, A, and B. Predicted yield of TT+QCD is in region D. Uncertainty shown are statistical uncertainty of the CR inputs propagated.}
+
+\setcounter{img}{-1}
+\begin{figure}[H]
+    \centering
+    % Loop for the first 4 rows of 3 images each
+    \newcount\row
+    \row=0
+    \whiledo{\row < 4}{%
+        \stepcounter{img}
+        \begin{minipage}[b]{0.3\textwidth}
+            \centering
+            \includegraphics[width=\textwidth]{plots/extendedabcd/extendedabcd_2018_sr_\arabic{img}.png}
+        \end{minipage}%
+        \stepcounter{img}
+        \begin{minipage}[b]{0.3\textwidth}
+            \centering
+            \includegraphics[width=\textwidth]{plots/extendedabcd/extendedabcd_2018_sr_\arabic{img}.png}
+        \end{minipage}%
+        \stepcounter{img}
+        \begin{minipage}[b]{0.3\textwidth}
+            \centering
+            \includegraphics[width=\textwidth]{plots/extendedabcd/extendedabcd_2018_sr_\arabic{img}.png}
+        \end{minipage}
+
+        \vskip 0.5cm
+        \advance\row by 1
+    }
+\end{figure}
+\captionof{figure}{Left: Yields of data and MC in signal region for 2018. Right: Inputs to the extendedABCD algorithm are the (Data - MC minor backgrounds - MC TTTT) yields in the five control regions Y, C, X, A, and B. Predicted yield of TT+QCD is in region D. Uncertainty shown are statistical uncertainty of the CR inputs propagated.}
+
+\setcounter{img}{-1}
+\begin{figure}[H]
+    \centering
+    % Loop for the first 4 rows of 3 images each
+    \newcount\row
+    \row=0
+    \whiledo{\row < 4}{%
+        \stepcounter{img}
+        \begin{minipage}[b]{0.3\textwidth}
+            \centering
+            \includegraphics[width=\textwidth]{plots/extendedabcd/extendedabcd_2022_sr_\arabic{img}.png}
+        \end{minipage}%
+        \stepcounter{img}
+        \begin{minipage}[b]{0.3\textwidth}
+            \centering
+            \includegraphics[width=\textwidth]{plots/extendedabcd/extendedabcd_2022_sr_\arabic{img}.png}
+        \end{minipage}%
+        \stepcounter{img}
+        \begin{minipage}[b]{0.3\textwidth}
+            \centering
+            \includegraphics[width=\textwidth]{plots/extendedabcd/extendedabcd_2022_sr_\arabic{img}.png}
+        \end{minipage}
+
+        \vskip 0.5cm
+        \advance\row by 1
+    }
+\end{figure}
+\captionof{figure}{Left: Yields of data and MC in signal region for 2022. Right: Inputs to the extendedABCD algorithm are the (Data - MC minor backgrounds - MC TTTT) yields in the five control regions Y, C, X, A, and B. Predicted yield of TT+QCD is in region D. Uncertainty shown are statistical uncertainty of the CR inputs propagated.}
+
+\setcounter{img}{-1}
+\begin{figure}[H]
+    \centering
+    % Loop for the first 4 rows of 3 images each
+    \newcount\row
+    \row=0
+    \whiledo{\row < 4}{%
+        \stepcounter{img}
+        \begin{minipage}[b]{0.3\textwidth}
+            \centering
+            \includegraphics[width=\textwidth]{plots/extendedabcd/extendedabcd_2022EE_sr_\arabic{img}.png}
+        \end{minipage}%
+        \stepcounter{img}
+        \begin{minipage}[b]{0.3\textwidth}
+            \centering
+            \includegraphics[width=\textwidth]{plots/extendedabcd/extendedabcd_2022EE_sr_\arabic{img}.png}
+        \end{minipage}%
+        \stepcounter{img}
+        \begin{minipage}[b]{0.3\textwidth}
+            \centering
+            \includegraphics[width=\textwidth]{plots/extendedabcd/extendedabcd_2022EE_sr_\arabic{img}.png}
+        \end{minipage}
+
+        \vskip 0.5cm
+        \advance\row by 1
+    }
+\end{figure}
+\captionof{figure}{Left: Yields of data and MC in signal region for 2022EE. Right: Inputs to the extendedABCD algorithm are the (Data - MC minor backgrounds - MC TTTT) yields in the five control regions Y, C, X, A, and B. Predicted yield of TT+QCD is in region D. Uncertainty shown are statistical uncertainty of the CR inputs propagated.}
+
+
+
+\clearpage
+
+
+\section{Extended ABCD yields in validation region}
 \label{sec:extendedabcdvalapp}
-\section{ABCDnn predicted shape}
-\label{sec:abcdnnapp}
-\section{ABCDnn validation}
-\label{sec:abcdnnvalapp}
-\section{Extended ABCD closure test}
+
+\setcounter{img}{-1}
+\begin{figure}[H]
+    \centering
+    % Loop for the first 4 rows of 3 images each
+    \newcount\row
+    \row=0
+    \whiledo{\row < 4}{%
+        \stepcounter{img}
+        \begin{minipage}[b]{0.3\textwidth}
+            \centering
+            \includegraphics[width=\textwidth]{plots/extendedabcd/extendedabcd_2016pre_vr_\arabic{img}.png}
+        \end{minipage}%
+        \stepcounter{img}
+        \begin{minipage}[b]{0.3\textwidth}
+            \centering
+            \includegraphics[width=\textwidth]{plots/extendedabcd/extendedabcd_2016pre_vr_\arabic{img}.png}
+        \end{minipage}%
+        \stepcounter{img}
+        \begin{minipage}[b]{0.3\textwidth}
+            \centering
+            \includegraphics[width=\textwidth]{plots/extendedabcd/extendedabcd_2016pre_vr_\arabic{img}.png}
+        \end{minipage}
+
+        \vskip 0.5cm
+        \advance\row by 1
+    }
+\end{figure}
+\captionof{figure}{Left: Yields of data and MC in validation region for 2016preVFP. Right: Inputs to the extendedABCD algorithm are the (Data - MC minor backgrounds - MC TTTT) yields in the five control regions Y, C, X, A, and B. Truth is the (Data - MC minor backgrounds - MC TTTT) yield in region D, as compared against predicted yield of TT+QCD in region D. Uncertainty shown are statistical uncertainty of the CR inputs propagated.}
+
+\setcounter{img}{-1}
+\begin{figure}[H]
+    \centering
+    % Loop for the first 4 rows of 3 images each
+    \newcount\row
+    \row=0
+    \whiledo{\row < 4}{%
+        \stepcounter{img}
+        \begin{minipage}[b]{0.3\textwidth}
+            \centering
+            \includegraphics[width=\textwidth]{plots/extendedabcd/extendedabcd_2016_vr_\arabic{img}.png}
+        \end{minipage}%
+        \stepcounter{img}
+        \begin{minipage}[b]{0.3\textwidth}
+            \centering
+            \includegraphics[width=\textwidth]{plots/extendedabcd/extendedabcd_2016_vr_\arabic{img}.png}
+        \end{minipage}%
+        \stepcounter{img}
+        \begin{minipage}[b]{0.3\textwidth}
+            \centering
+            \includegraphics[width=\textwidth]{plots/extendedabcd/extendedabcd_2016_vr_\arabic{img}.png}
+        \end{minipage}
+
+        \vskip 0.5cm
+        \advance\row by 1
+    }
+\end{figure}
+\captionof{figure}{Left: Yields of data and MC in validation region for 2016. Right: Inputs to the extendedABCD algorithm are the (Data - MC minor backgrounds - MC TTTT) yields in the five control regions Y, C, X, A, and B. Truth is the (Data - MC minor backgrounds - MC TTTT) yield in region D, as compared against predicted yield of TT+QCD in region D. Uncertainty shown are statistical uncertainty of the CR inputs propagated.}
+
+\setcounter{img}{-1}
+\begin{figure}[H]
+    \centering
+    % Loop for the first 4 rows of 3 images each
+    \newcount\row
+    \row=0
+    \whiledo{\row < 4}{%
+        \stepcounter{img}
+        \begin{minipage}[b]{0.3\textwidth}
+            \centering
+            \includegraphics[width=\textwidth]{plots/extendedabcd/extendedabcd_2017_vr_\arabic{img}.png}
+        \end{minipage}%
+        \stepcounter{img}
+        \begin{minipage}[b]{0.3\textwidth}
+            \centering
+            \includegraphics[width=\textwidth]{plots/extendedabcd/extendedabcd_2017_vr_\arabic{img}.png}
+        \end{minipage}%
+        \stepcounter{img}
+        \begin{minipage}[b]{0.3\textwidth}
+            \centering
+            \includegraphics[width=\textwidth]{plots/extendedabcd/extendedabcd_2017_vr_\arabic{img}.png}
+        \end{minipage}
+
+        \vskip 0.5cm
+        \advance\row by 1
+    }
+\end{figure}
+\captionof{figure}{Left: Yields of data and MC in validation region for 2017. Right: Inputs to the extendedABCD algorithm are the (Data - MC minor backgrounds - MC TTTT) yields in the five control regions Y, C, X, A, and B. Truth is the (Data - MC minor backgrounds - MC TTTT) yield in region D, as compared against predicted yield of TT+QCD in region D. Uncertainty shown are statistical uncertainty of the CR inputs propagated.}
+
+
+\setcounter{img}{-1}
+\begin{figure}[H]
+    \centering
+    % Loop for the first 4 rows of 3 images each
+    \newcount\row
+    \row=0
+    \whiledo{\row < 4}{%
+        \stepcounter{img}
+        \begin{minipage}[b]{0.3\textwidth}
+            \centering
+            \includegraphics[width=\textwidth]{plots/extendedabcd/extendedabcd_2018_vr_\arabic{img}.png}
+        \end{minipage}%
+        \stepcounter{img}
+        \begin{minipage}[b]{0.3\textwidth}
+            \centering
+            \includegraphics[width=\textwidth]{plots/extendedabcd/extendedabcd_2018_vr_\arabic{img}.png}
+        \end{minipage}%
+        \stepcounter{img}
+        \begin{minipage}[b]{0.3\textwidth}
+            \centering
+            \includegraphics[width=\textwidth]{plots/extendedabcd/extendedabcd_2018_vr_\arabic{img}.png}
+        \end{minipage}
+
+        \vskip 0.5cm
+        \advance\row by 1
+    }
+\end{figure}
+\captionof{figure}{Left: Yields of data and MC in validation region for 2018. Right: Inputs to the extendedABCD algorithm are the (Data - MC minor backgrounds - MC TTTT) yields in the five control regions Y, C, X, A, and B. Truth is the (Data - MC minor backgrounds - MC TTTT) yield in region D, as compared against predicted yield of TT+QCD in region D. Uncertainty shown are statistical uncertainty of the CR inputs propagated.}
+
+
+\setcounter{img}{-1}
+\begin{figure}[H]
+    \centering
+    % Loop for the first 4 rows of 3 images each
+    \newcount\row
+    \row=0
+    \whiledo{\row < 4}{%
+        \stepcounter{img}
+        \begin{minipage}[b]{0.3\textwidth}
+            \centering
+            \includegraphics[width=\textwidth]{plots/extendedabcd/extendedabcd_2022_vr_\arabic{img}.png}
+        \end{minipage}%
+        \stepcounter{img}
+        \begin{minipage}[b]{0.3\textwidth}
+            \centering
+            \includegraphics[width=\textwidth]{plots/extendedabcd/extendedabcd_2022_vr_\arabic{img}.png}
+        \end{minipage}%
+        \stepcounter{img}
+        \begin{minipage}[b]{0.3\textwidth}
+            \centering
+            \includegraphics[width=\textwidth]{plots/extendedabcd/extendedabcd_2022_vr_\arabic{img}.png}
+        \end{minipage}
+
+        \vskip 0.5cm
+        \advance\row by 1
+    }
+\end{figure}
+\captionof{figure}{Left: Yields of data and MC in validation region for 2022. Right: Inputs to the extendedABCD algorithm are the (Data - MC minor backgrounds - MC TTTT) yields in the five control regions Y, C, X, A, and B. Truth is the (Data - MC minor backgrounds - MC TTTT) yield in region D, as compared against predicted yield of TT+QCD in region D. Uncertainty shown are statistical uncertainty of the CR inputs propagated.}
+
+
+\setcounter{img}{-1}
+\begin{figure}[H]
+    \centering
+    % Loop for the first 4 rows of 3 images each
+    \newcount\row
+    \row=0
+    \whiledo{\row < 4}{%
+        \stepcounter{img}
+        \begin{minipage}[b]{0.3\textwidth}
+            \centering
+            \includegraphics[width=\textwidth]{plots/extendedabcd/extendedabcd_2022EE_vr_\arabic{img}.png}
+        \end{minipage}%
+        \stepcounter{img}
+        \begin{minipage}[b]{0.3\textwidth}
+            \centering
+            \includegraphics[width=\textwidth]{plots/extendedabcd/extendedabcd_2022EE_vr_\arabic{img}.png}
+        \end{minipage}%
+        \stepcounter{img}
+        \begin{minipage}[b]{0.3\textwidth}
+            \centering
+            \includegraphics[width=\textwidth]{plots/extendedabcd/extendedabcd_2022EE_vr_\arabic{img}.png}
+        \end{minipage}
+
+        \vskip 0.5cm
+        \advance\row by 1
+    }
+\end{figure}
+\captionof{figure}{Left: Yields of data and MC in validation region for 2022EE. Right: Inputs to the extendedABCD algorithm are the (Data - MC minor backgrounds - MC TTTT) yields in the five control regions Y, C, X, A, and B. Truth is the (Data - MC minor backgrounds - MC TTTT) yield in region D, as compared against predicted yield of TT+QCD in region D. Uncertainty shown are statistical uncertainty of the CR inputs propagated.}
+
+
+
+
+\clearpage
+
+
+\section{Closure Test for Systematic Uncertainty of Extended ABCD}
 \label{sec:extendedabcdclosuretestapp}
+
+\setcounter{img}{11}
+\begin{figure}[H]
+    \centering
+    % Loop for the first 4 rows of 3 images each
+    \newcount\row
+    \row=0
+    \whiledo{\row < 4}{%
+        \stepcounter{img}
+        \begin{minipage}[b]{0.4\textwidth}
+            \centering
+            \includegraphics[width=\textwidth]{plots/extendedabcd/extendedabcd_2018_vr_\arabic{img}.png}
+        \end{minipage}%
+        \stepcounter{img}
+        \begin{minipage}[b]{0.4\textwidth}
+            \centering
+            \includegraphics[width=\textwidth]{plots/extendedabcd/extendedabcd_2018_vr_\arabic{img}.png}
+        \end{minipage}
+
+        \vskip 0.5cm
+        \advance\row by 1
+    }
+\end{figure}
+\captionof{figure}{Left: Yields of data and MC in closure test validation region for 2018, which is defined as N\_RT=0, N\_BT=0, N\_jet ==8 and N\_bjet $\ge3$, orthogonal to both Validation and Signal Region. To test our method for estimating systematic uncertainty for extendedABCD, normalization uncertainty is derived from this region to apply to the closure test signal region. Right: Inputs to the extendedABCD algorithm are the (Data - MC minor backgrounds - MC TTTT) yields in the five control regions Y, C, X, A, and B. Truth is the (Data - MC minor backgrounds - MC TTTT) yield in region D, as compared against predicted yield of TT+QCD in region D. Uncertainty shown are $\pm$ statistical $\pm$ systematic (normalization).}
+
+\setcounter{img}{11}
+\begin{figure}[H]
+    \centering
+    % Loop for the first 4 rows of 3 images each
+    \newcount\row
+    \row=0
+    \whiledo{\row < 4}{%
+        \stepcounter{img}
+        \begin{minipage}[b]{0.4\textwidth}
+            \centering
+            \includegraphics[width=\textwidth]{plots/extendedabcd/extendedabcd_2018_sr_\arabic{img}.png}
+        \end{minipage}%
+        \stepcounter{img}
+        \begin{minipage}[b]{0.4\textwidth}
+            \centering
+            \includegraphics[width=\textwidth]{plots/extendedabcd/extendedabcd_2018_sr_\arabic{img}.png}
+        \end{minipage}
+
+        \vskip 0.5cm
+        \advance\row by 1
+    }
+\end{figure}
+\captionof{figure}{Left: Yields of data and MC in closure test signal region for 2018, which is defined as N\_RT=0, N\_BT=0, N\_jet $\ge9$ and N\_bjet $\ge3$, orthogonal to both Validation and Signal Region. To test our method for estimating systematic uncertainty for extendedABCD, normalization uncertainty is derived from the closure test validation region to apply to this region. Right: Inputs to the extendedABCD algorithm are the (Data - MC minor backgrounds - MC TTTT) yields in the five control regions Y, C, X, A, and B. Truth is the (Data - MC minor backgrounds - MC TTTT) yield in region D, as compared against predicted yield of TT+QCD in region D. Uncertainty shown are $\pm$ statistical $\pm$ systematic (normalization). These tables show that the method for estimating normalization systematic uncertainty of the extendedABCD as described in section \ref{sec:systextendedabcd} provides good coverage for the disagreement between truth and predicted.}
+
+
+\clearpage
+
+%\section{ABCDnn in validation region}
+%\label{sec:abcdnnvalapp}
+%\clearpage
 \section{ABCDnn closure test}
-\label{sec:abcdnnclosuretestapp}
+\label{sec:abcdnnclosuretest}
+\def\imageDir{plots/abcdnn_closure_test/}
+\def\imageWidth{\textwidth}  % Set the width to \textwidth (or any other value)
+
+\begin{figure}[H]
+ \centering
+ \newcount\row
+    \row=0
+% First image
+\begin{minipage}[b]{0.4\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{\imageDir 700to800.png}
+\end{minipage}%
+% Second image
+\begin{minipage}[b]{0.4\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{\imageDir 800to900.png}
+\end{minipage}
+\vskip 0.5cm
+\advance\row by 1
+
+% Third image
+\begin{minipage}[b]{0.4\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{\imageDir 900to1000.png}
+\end{minipage}%
+% Fourth image
+\begin{minipage}[b]{0.4\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{\imageDir 1000to1100.png}
+\end{minipage}
+\vskip 0.5cm
+\advance\row by 1
+
+% Fifth image
+\begin{minipage}[b]{0.4\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{\imageDir 1100to1200.png}
+\end{minipage}%
+% Sixth image
+\begin{minipage}[b]{0.4\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{\imageDir 1200to1300.png}
+\end{minipage}
+\vskip 0.5cm
+\advance\row by 1
+\end{figure}
+
+\begin{figure}[H]
+ \centering
+% Seventh image
+\begin{minipage}[b]{0.4\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{\imageDir 1300to1500.png}
+\end{minipage}%
+% Eighth image
+\begin{minipage}[b]{0.4\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{\imageDir 1500toinf.png}
+\end{minipage}
+\vskip 0.5cm
+\advance\row by 1
+
+% Ninth image
+\begin{minipage}[b]{0.4\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{\imageDir 700to1400.png}
+\end{minipage}%
+% Tenth image
+\begin{minipage}[b]{0.4\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{\imageDir 1400toinf.png}
+\end{minipage}
+\vskip 0.5cm
+\advance\row by 1
+
+% Eleventh image
+\begin{minipage}[b]{0.4\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{\imageDir 700to1100.png}
+
+\end{minipage}%
+% Twelfth image
+\begin{minipage}[b]{0.4\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{\imageDir 1100toinf.png}
+\end{minipage}
+\end{figure}
+\captionof{figure}{Results of morphing MC TT to ttX with 2016, 2017 and 2018 combined ultra-legacy dataset for the closure test of ABCDnn. }
+\clearpage
+
+%\section{Closure Test for Systematic Uncertainty of ABCDnn}
+%\label{sec:abcdnnclosuretest_syst}
+
+\section{Impact Plots}
+\label{sec:impact}
+\subsection{2016}
+\includepdf[pages=-]{plots/impacts_2016.pdf}
+\subsection{2017}
+\includepdf[pages=-]{plots/impacts_2017.pdf}
+\subsection{2018}
+\includepdf[pages=-]{plots/impacts_2018.pdf}
+\subsection{2022}
+\includepdf[pages=-]{plots/impacts_2022.pdf}
+\clearpage
+
 
 \bibliographystyle{plain}
 \bibliography{references}
