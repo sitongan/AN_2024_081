@@ -110,17 +110,17 @@ Year                  & \multicolumn{1}{c|}{Era} & \multicolumn{1}{c|}{Trigger p
 \end{tabular}
 \end{table}
 
-The efficiency of these triggers is measured in an independent sample selected with a single muon trigger (HLT\_IsoMu24 or HLT\_IsoMu27). The efficiency is measured as a function of $N_{b-jet}$ and $N_{jet}$. The efficiency is measured in the region where  $H_T >900$ GeV, as the trigger efficiency is expected to be independent of $H_T$ in this region. In order to ensure that the events passing the single muon trigger are triggered by genuine muons rather than jets, one or more offline muons as defined in \ref{sec:leptons} are required. The efficiency is computed as follows:
+The efficiency of these triggers is measured in an independent sample selected with a single muon trigger (HLT\_IsoMu24 or HLT\_IsoMu27). The efficiency is measured as a function of $N_{b-jet}$ $N_{jet}$ and $H_T. or the $H_T$ variable, the events are categorized into three wide bins: 700–800 GeV, 800–900 GeV, and $\geq$900 GeV. This binning is chosen to ensure a sufficiently large number of events in each bin. In order to ensure that the events passing the single muon trigger are triggered by genuine muons rather than jets, one or more offline muons as defined in \ref{sec:leptons} are required. The efficiency is computed as follows:
 \begin{equation}
   \epsilon(N_j, N_b) = \frac{\textrm{Number of events passed OR of triggers and denominator selection}}{\textrm{Number of events that passed HLT\_IsoMu24 or HLT\_IsoMu27}}.
 \end{equation}
 
 \begin{figure}[!t]
     \centering
-    \includegraphics[width=.4\columnwidth]{plots/Trigger/2016_preVFP.pdf}
-    \includegraphics[width=.4\columnwidth]{plots/Trigger/2016.pdf}
-    \includegraphics[width=.4\columnwidth]{plots/Trigger/2017.pdf}
-    \includegraphics[width=.4\columnwidth]{plots/Trigger/2018.pdf}
+    \includegraphics[width=.8\columnwidth]{plots/Trigger/2016_preVFP.pdf}
+    \includegraphics[width=.8\columnwidth]{plots/Trigger/2016.pdf}
+    \includegraphics[width=.8\columnwidth]{plots/Trigger/2017.pdf}
+    \includegraphics[width=.8\columnwidth]{plots/Trigger/2018.pdf}
     
     \caption{Efficiency measured for search triggers as a function of $N_{jet}$ and $N_{b-jet}$ for 2016 pre VFP, 2016 post VFP, 2017 and 2018 data. The $N_{jet}$ = 6 region used for the validation test is shown as well.}
     %\label{figure_1} 
@@ -128,10 +128,10 @@ The efficiency of these triggers is measured in an independent sample selected w
 
 \begin{figure}[!t]
     \centering
-     \includegraphics[width=.4\columnwidth]{plots/Trigger/2022.pdf}
-    \includegraphics[width=.4\columnwidth]{plots/Trigger/2022EE.pdf}
-    \includegraphics[width=.4\columnwidth]{plots/Trigger/2023.pdf}
-    \includegraphics[width=.4\columnwidth]{plots/Trigger/2023BPix.pdf}
+     \includegraphics[width=.8\columnwidth]{plots/Trigger/2022.pdf}
+    \includegraphics[width=.8\columnwidth]{plots/Trigger/2022EE.pdf}
+    \includegraphics[width=.8\columnwidth]{plots/Trigger/2023.pdf}
+    \includegraphics[width=.8\columnwidth]{plots/Trigger/2023BPix.pdf}
     
     \caption{Efficiency measured for search triggers as a function of $N_{jet}$ and $N_{b-jet}$ for 2016 pre VFP, 2016 post VFP, 2017 and 2018 data. The $N_{jet}$ = 6 region used for the validation test is shown as well.}
     %\label{figure_1} 
@@ -1238,7 +1238,7 @@ For boosted top quarks with $p_T > 400$GeV, or W bosons with $p_T > 200$GeV, the
 \subsubsection{Resolved Top tagging}
 \label{sec:restop}
 
-For moderately boosted top quarks, the decay products can be resolved into separate AK4 jets. A dedicated XGBoost BDT trigger is developed for tagging these resolved tops, following the same methodology as the Run2 all-hadronic TTTT analysis \cite{prev_ftop_analysis}. From the AK4 jets collection, up to four jets with the highest Deepjet b-tag scores are selected. For each b jet candidate, we identify all the unique two-jet combinations in the AK4 jets collection (excluding the b jet candidate) as  W subjet candidates, with the condition that the combined mass of the two W subjet candidate is within 40 GeV of the true W boson mass, and that the mass of the combined three-jet candidate is within 80 GeV of the true top quark mass. These selected three-jet combinations are the candidates for resolved tops. If the resolved top candidates overlap with each other by sharing the same AK4 jet, the candidate with lower $p_T$ is rejected.
+For moderately boosted top quarks, the decay products can be resolved into separate AK4 jets. A dedicated XGBoost BDT trigger is developed for tagging these resolved tops, following the same methodology as the Run2 all-hadronic TTTT analysis \cite{prev_ftop_analysis}. From the AK4 jets collection, up to four jets with the highest Deepjet b-tag scores are selected. For each b jet candidate, we identify all the unique two-jet combinations in the AK4 jets collection (excluding the b jet candidate) as  W subjet candidates, with the condition that the combined mass of the two W subjet candidate is within 40 GeV of the true W boson mass, and that the mass of the combined three-jet candidate is within 80 GeV of the true top quark mass. These selected three-jet combinations are the candidates for resolved tops. If the resolved top candidates overlap with each other by sharing the same AK4 jet, the candidate with lower $p_T$ is rejected. The resolved top candidates are also required to have $p_T$ > 100 GeV. This threshold is optimized at this point as there is much more fake tops at lower pT, as seen in Fig \ref{fig:mistag_genmatch} and Fig \ref{fig:tageff_genmatch}.
 
 The following variables form the inputs to the BDT:
 
@@ -1257,7 +1257,9 @@ The following variables form the inputs to the BDT:
   \item The jet constituent multiplicities of the W subjets.
 \end{itemize}
 
-For training, genuine hadronic top candidates are taken from single-lepton $t\bar{t}$ simulation samples, and fake hadronic top candidates from di-lepton $t\bar{t}$ simulation samples, with the requirement of $MET>100$,  $N_{jets}>=5$ and $N_{bjets}>=1$. 2018 samples are used for Run2 model and 2022 samples for Run3. The BDT is trained with the XGBoost library on 500000 candidates for genuine and fake samples each. Before training, to decorrelate from $p_{T}$ of the top candidate, the candidates are reweighted according to the $p_{T}$ of the top candidate in bins of 25 GeV width from 0 Gev to 900 GeV, 50 GeV width from 900 GeV to 1000 GeV, and 100 GeV width from 1000 GeV to 5000 GeV, such that the sum of weights of candidates in each bin is equal. \\
+MC and data comparison plot of input variables are available in Appendix \ref{sec:restop_input}.
+
+For training, genuine hadronic top candidates are taken from single-lepton $t\bar{t}$ simulation samples, and fake hadronic top candidates from di-lepton $t\bar{t}$ simulation samples, with the requirement of $MET>100$,  $N_{jets}>=5$ and $N_{bjets}>=1$. Gen-matching is done by defining a list of gen-level top by selecting those that it decays into gen-level bjet and W jets, which decays into two jets hadronically. A resolved top candidate is considered as matched if the b jet and two W subjets of this candidate can be matched to the corresponding components of a gen-level top by delta R matching. 2018 samples are used for Run2 model and 2022 samples for Run3. The BDT is trained with the XGBoost library on 500000 candidates for genuine and fake samples each. Before training, to decorrelate from $p_{T}$ of the top candidate, the candidates are reweighted according to the $p_{T}$ of the top candidate in bins of 25 GeV width from 0 Gev to 900 GeV, 50 GeV width from 900 GeV to 1000 GeV, and 100 GeV width from 1000 GeV to 5000 GeV, such that the sum of weights of candidates in each bin is equal. No top pt reweighting is applied. \\
 
 The working point for this resolved top tagger is selected at 2\% False Positive Rate and given in Table \ref{tab:topWP}.
 
@@ -1286,7 +1288,32 @@ Scales factors for tagging efficiencies and misidentification rates are derived 
 
 For the derivation of the misidentification rates, we use a 0-lepton, $N_{b}=1$ region, selected with pure $H_{T}$ triggers and requiring $H_{T}>1200 GeV$. This region was selected to be enriched in QCD multi-jet events and is orthogonal to the signal region via the $N_{b}=1$ requirement. In this region, simulation is normalized to data. To correct the contamination of genuine tops in the data, we estimate the number of genuine tops in data by the number of candidates matched to top quarks at the generator level in simulation, and then subtract it from the data. In simulation, the misidentification rates are measured to be the fraction of fake resolved top candidates that pass the working point. In data, the misidentification rates are measured to be the fraction of candidates (after subtraction of the estimated genuine tops) that pass the working point. In the end, the scale factor is calculated as the ratio of the misidentification rates in data to those in simulation.
 
+The resultant mistag rate scale factor can be seen in the SF (ratio) plot for each year in Fig \ref{fig:mistag_sf}.
+
 For the derivation of the tagging efficiency scale factor, we used single muon triggers to define a control region selected to be enriched in semi-leptonic $t\bar{t}$ events with similar kinematics to the Signal Region. This region is orthogonal to the Signal Region via the requirement on the muon. We further require that the events to be $N_b \geq 2, N_j \geq 4, p_T^{\text{miss}} > 75\, \text{GeV}$, and muon $ p_T > 50\, \text{GeV}.$ In each event, jets are first cleaned against leptons, and resolved top candidates cleaned against muons with a $\Delta R$ of 0.4. We first normalize simulation to data. The misidentification scale factor is applied to candidates in simulation that pass the working point but fail to be matched to top quarks at generator level. Candidates are then split into three $p_T$ categories: low ($100-300GeV$), medium ($300-500GeV$) and high ($\ge500GeV$). We then perform a simultaneous template fit, where two templates of candidates in simulation matched and unmatched to top quarks at generator level respectively are used. The templates are binned in top candidate mass, since it is independent of candidate $p_T$. The fit from simulation to data is performed simultaneously for candidates passing and failing the working point. In each $p_T$ category, the tagging efficiency scale factor is calculated as $\frac{\epsilon_{post-fit}}{\epsilon_{pre-fit}}$, where tagging efficiency $\epsilon$ is defined as the ratio of number of matched (genuine) top candidates passing the working point to the total number of matched top candidates, and $\epsilon_{post-fit}$ is the tagging efficiency in data estimated from fitting simulation to data.
+
+A summary of the scale factor for tagging efficiency is in Table \ref{tab:restop_sf_tageff}.
+
+\begin{table}[ht]
+\centering
+\begin{tabular}{|c|c|c|c|}
+\hline
+\textbf{Year} & \textbf{low} & \textbf{medium} & \textbf{high} \\
+\hline
+2016preVFP & $0.890\pm0.047$ & $0.928\pm0.034$ & $1.026\pm0.052$ \\
+2016 & $0.922\pm0.049$ & $0.930\pm0.037$ & $0.953\pm0.076$ \\
+2017 & $0.928\pm0.032$ & $0.884\pm0.023$ & $0.978\pm0.053$ \\
+2018 & $0.862\pm0.032$ & $0.904\pm0.020$ & $0.976\pm0.043$ \\
+2022 & $0.859\pm0.076$ & $0.843\pm0.048$ & $0.842\pm0.102$ \\
+2022EE & $0.897\pm0.048$ & $0.950\pm0.030$ & $0.993\pm0.062$ \\
+2023 & $0.719\pm0.070$ & $0.807\pm0.048$ & $0.637\pm0.133$ \\
+2023BPix & $0.784\pm0.085$ & $0.819\pm0.060$ & $1.036\pm0.085$ \\
+\hline
+\end{tabular}
+\caption{Summary table for Scale factor of  tagging efficiency.}
+\label{tab:restop_sf_tageff}
+\end{table}
+
 
 \begin{figure}[H]
 \centering
@@ -3387,6 +3414,59 @@ These correction factors are applied in tandem with the b-tagging scale factors 
     \end{figure}
   }
 }
+\clearpage
+
+\section{MC and Data plot for resolved top tagger input variables}
+\label{sec:restop_input}
+
+\setcounter{img}{-1}
+\begin{figure}[H]
+    \centering
+    \newcount\row
+    \row=0
+    \whiledo{\row < 4}{% 4 rows
+        % One row of 4 images
+        \newcount\col
+        \col=0
+        \whiledo{\col < 4}{%
+            \stepcounter{img}
+            \begin{minipage}[b]{0.24\textwidth}
+                \centering
+                \includegraphics[width=\textwidth]{plots/restop_var/plots_2018/2018_\arabic{img}.png}
+            \end{minipage}%
+            \advance\col by 1
+        }
+        \vskip 0.5cm
+        \advance\row by 1
+    }
+    \captionof{figure}{MC and data comparison plots for different input variables for 2018. A selection of $N_{\text{jets}} \geq 6$, $N_{\text{bjets}} \geq 2$ and $H_T > 700$ GeV is applied, mirroring the selection for our control and signal regions. Triggers used in the main analysis are also applied to the data.}
+\end{figure}
+
+\clearpage
+
+\setcounter{img}{-1}
+\begin{figure}[H]
+    \centering
+    \newcount\row
+    \row=0
+    \whiledo{\row < 4}{% 4 rows
+        % One row of 4 images
+        \newcount\col
+        \col=0
+        \whiledo{\col < 4}{%
+            \stepcounter{img}
+            \begin{minipage}[b]{0.24\textwidth}
+                \centering
+                \includegraphics[width=\textwidth]{plots/restop_var/plots_2023/2023_\arabic{img}.png}
+            \end{minipage}%
+            \advance\col by 1
+        }
+        \vskip 0.5cm
+        \advance\row by 1
+    }
+    \captionof{figure}{MC and data comparison plots for different input variables for 2023. A selection of $N_{\text{jets}} \geq 6$, $N_{\text{bjets}} \geq 2$ and $H_T > 700$ GeV is applied, mirroring the selection for our control and signal regions. Triggers used in the main analysis are also applied to the data.}
+\end{figure}
+
 \clearpage
 
 \bibliographystyle{plain}
